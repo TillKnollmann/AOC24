@@ -24,20 +24,20 @@ def main():
     path = os.getcwd()
     template_path = os.path.join(path, "Template")
     for i in range(1, 26):
-        current_path = os.path.join(path, "Day " + str(i))
+        current_path = os.path.join(path, "day-" + str(i))
         if not os.path.exists(current_path):
             shutil.copytree(template_path, current_path)
             day_name = "day-" + str(i) + ".py"
             os.rename(
-                str(current_path) + "\\template.py", str(current_path) + "\\" + day_name
+                str(current_path) + "/template.py", str(current_path) + "/" + day_name
             )
             file_data = ""
-            with open(current_path + "\\" + day_name, "r") as file:
+            with open(current_path + "/" + day_name, "r") as file:
                 file_data = file.read()
             file_data = file_data.replace("DAY", str(i))
-            with open(current_path + "\\" + day_name, "w") as file:
+            with open(current_path + "/" + day_name, "w") as file:
                 file.write(file_data)
-            # with open(current_path + "\\" + day_name, "w") as file:
+            # with open(current_path + "/" + day_name, "w") as file:
             # file.write(getTemplateCode(i))
 
 
