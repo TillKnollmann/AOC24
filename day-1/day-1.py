@@ -128,7 +128,7 @@ def main():
     test = True
 
     sol1 = sub1 = False
-    sol2 = sub2 = True
+    sol2 = sub2 = False
 
     if test:
         if not runTests(test_sol_1, test_sol_2, path):
