@@ -27,7 +27,7 @@ def main():
         current_path = os.path.join(path, "day-" + str(i))
         if not os.path.exists(current_path):
             shutil.copytree(template_path, current_path)
-            day_name = "day-" + str(i) + ".py"
+            day_name = "Day " + str(i) + ".py"
             os.rename(
                 str(current_path) + "/template.py", str(current_path) + "/" + day_name
             )

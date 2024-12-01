@@ -114,7 +114,7 @@ def main():
         if not runTests(test_sol_1, test_sol_2, path):
             sub1 = sub2 = False
 
-    data_main = get_data(day=day, year=2021).splitlines()
+    data_main = get_data(day=day, year=2024).splitlines()
 
     if sol1:
         result_1 = part1(data_main, True)
@@ -127,10 +127,10 @@ def main():
     print("\n")
 
     if sub1:
-        submit(int(result_1), part="a", day=day, year=2021)
+        submit(int(result_1), part="a", day=day, year=2024)
 
     if sub2:
-        submit(int(result_2), part="b", day=day, year=2021)
+        submit(int(result_2), part="b", day=day, year=2024)
 
 
 if __name__ == "__main__":
