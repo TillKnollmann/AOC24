@@ -100,7 +100,7 @@ def runTests(test_sol_1, test_sol_2, path):
 
 def main():
     global path
-    path = "Day " + str(day) + "/"
+    path = "day-" + str(day) + "/"
 
     test_sol_1 = []  # Todo put in test solutions part 1
     test_sol_2 = []  # Todo put in test solutions part 2

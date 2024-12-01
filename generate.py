@@ -1,12 +1,13 @@
 import os
 import shutil
+import argparse
 
 tab = "    "
 
 
 def getTemplateCode(day):
     result = "import numpy as np\nimport time\nimport pprint\n\n"
-    result += 'path = "Day ' + str(day) + '/input-test.txt"\n\n'
+    result += 'path = "day-' + str(day) + '/input-test.txt"\n\n'
     result += "def main():\n"
     result += tab + 'with open(path, "r") as file:\n'
     result += tab + tab + "startTime = time.time()\n"
@@ -21,24 +22,27 @@ def getTemplateCode(day):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Generator for AOC day solutions")
+    parser.add_argument('-d', '--day', type=int, help='The day to generate', required=True)
+    args = parser.parse_args()
+
     path = os.getcwd()
     template_path = os.path.join(path, "Template")
-    for i in range(1, 26):
-        current_path = os.path.join(path, "day-" + str(i))
-        if not os.path.exists(current_path):
-            shutil.copytree(template_path, current_path)
-            day_name = "Day " + str(i) + ".py"
-            os.rename(
-                str(current_path) + "/template.py", str(current_path) + "/" + day_name
-            )
-            file_data = ""
-            with open(current_path + "/" + day_name, "r") as file:
-                file_data = file.read()
-            file_data = file_data.replace("DAY", str(i))
-            with open(current_path + "/" + day_name, "w") as file:
-                file.write(file_data)
-            # with open(current_path + "/" + day_name, "w") as file:
-            # file.write(getTemplateCode(i))
+    current_path = os.path.join(path, "day-" + str(args.day))
+    if not os.path.exists(current_path):
+        shutil.copytree(template_path, current_path)
+        day_name = "day-" + str(args.day) + ".py"
+        os.rename(
+            str(current_path) + "/template.py", str(current_path) + "/" + day_name
+        )
+        file_data = ""
+        with open(current_path + "/" + day_name, "r") as file:
+            file_data = file.read()
+        file_data = file_data.replace("DAY", str(args.day))
+        with open(current_path + "/" + day_name, "w") as file:
+            file.write(file_data)
+        # with open(current_path + "/" + day_name, "w") as file:
+        # file.write(getTemplateCode(i))
 
 
 if __name__ == "__main__":
