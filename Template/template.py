@@ -62,10 +62,7 @@ def runTests(test_sol_1, test_sol_2, path):
     test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
 
     success_1 = [(test_sol_1[i] == test_res_1[i]) for i in range(len(test_sol_1))]
-    success_2 = [
-        "Part 2 Test " + str(i + 1) + " " + (test_sol_2[i] == test_res_2[i])
-        for i in range(len(test_sol_2))
-    ]
+    success_2 = [(test_sol_2[i] == test_res_2[i]) for i in range(len(test_sol_2))]
 
     for i in range(len(test_sol_1)):
         if success_1[i]:
