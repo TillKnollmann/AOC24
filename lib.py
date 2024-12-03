@@ -11,6 +11,7 @@ def getDataLines(path: str) -> list:
 def getTestPaths(path) -> list:
     paths = []
     for root, dirs, files in os.walk(path):
+        files.sort()
         # select file name
         for file in files:
             # check the extension of files
