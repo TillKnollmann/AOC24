@@ -13,6 +13,8 @@ from aocd import submit
 import collections
 
 from enum import Enum
+import copy
+from tqdm import tqdm
 
 class Direction(Enum):
     NORTH = 1
@@ -52,20 +54,35 @@ def parseInput(input: list[str]) -> tuple[Agent, Field]:
 
     return start_position, Field(obstacles, len(input[0]), len(input))
 
-def get_number_of_visited_positions(agent: Agent, field: Field) -> int:
+def get_visited_positions(agent: Agent, field: Field) -> tuple[list[Agent],set[tuple[int, int]]]:
 
     visited_positions = set()
+    path = []
     current_agent = agent
 
     while is_agent_in_bounds(current_agent, field):
 
         visited_positions.add((current_agent.x, current_agent.y))
+        path.append(Agent(current_agent.x, current_agent.y, current_agent.direction))
         new_agent = get_next_position(current_agent, field)
         # print(f'({current_agent.x},{current_agent.y}) -> ({new_agent.x},{new_agent.y})')
         current_agent = new_agent
 
-    return len(visited_positions)
+    return path, visited_positions
 
+def has_loop(agent: Agent, field: Field) -> bool:
+
+    visited_positions = set()
+    current_agent = agent
+
+    while is_agent_in_bounds(current_agent, field) and not (current_agent.x, current_agent.y, current_agent.direction) in visited_positions:
+
+        visited_positions.add((current_agent.x, current_agent.y, current_agent.direction))
+        new_agent = get_next_position(current_agent, field)
+        # print(f'({current_agent.x},{current_agent.y}) -> ({new_agent.x},{new_agent.y})')
+        current_agent = new_agent
+
+    return (current_agent.x, current_agent.y, current_agent.direction) in visited_positions
 
 def is_agent_in_bounds(agent: Agent, field: Field) -> bool:
 
@@ -113,7 +130,7 @@ def part1(data, measure=False):
 
     agent, field = parseInput(data)
 
-    result_1 = get_number_of_visited_positions(agent, field)
+    result_1 = len(get_visited_positions(agent, field)[1])
 
     executionTime = round(time.time() - startTime, 2)
     if measure:
@@ -123,16 +140,23 @@ def part1(data, measure=False):
 
 def part2(data, measure=False):
     startTime = time.time()
-    result_2 = None
 
-    input = parseInput(data)
+    agent, field = parseInput(data)
 
-    # Todo program part 2
+    path, candidate_positions = get_visited_positions(agent, field)
+    valid_positions = set()
+
+    for candidate_position in tqdm(candidate_positions):
+        new_obstacles = copy.deepcopy(field.obstacles)
+        new_obstacles[candidate_position[0]][candidate_position[1]] = True
+        new_field = Field(new_obstacles, field.size_x, field.size_y)
+        if has_loop(agent, new_field):
+            valid_positions.add((candidate_position[0], candidate_position[1]))
 
     executionTime = round(time.time() - startTime, 2)
     if measure:
         print("\nPart 2 took: " + str(executionTime) + " s")
-    return result_2
+    return str(len(valid_positions))
 
 
 def runTests(test_sol_1, test_sol_2, path):
@@ -184,13 +208,13 @@ def main():
     global path
     path = "day-" + str(day) + "/"
 
-    test_sol_1 = [ "41" ]  # Todo put in test solutions part 1
-    test_sol_2 = []  # Todo put in test solutions part 2
+    test_sol_1 = [ "41" ]
+    test_sol_2 = [ "6" ]
 
-    test = True  # Todo
+    test = True
 
-    sol1 = sub1 = True  # Todo
-    sol2 = sub2 = False  # Todo
+    sol1 = sub1 = False
+    sol2 = sub2 = True  # Todo
 
     if test:
         if not runTests(test_sol_1, test_sol_2, path):
