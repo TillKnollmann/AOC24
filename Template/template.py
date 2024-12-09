@@ -2,6 +2,9 @@ from datetime import date
 import numpy as np
 import time
 import pprint
+import math
+import re
+from copy import deepcopy
 
 from importlib.machinery import SourceFileLoader
 
@@ -14,7 +17,8 @@ day = DAY
 path = ""
 
 
-def parseInput(input):
+def parseInput(input: list[str]) -> None:
+
     result = None
 
     # Todo Input parsing
@@ -23,6 +27,7 @@ def parseInput(input):
 
 
 def part1(data, measure=False):
+
     startTime = time.time()
     result_1 = None
 
@@ -37,6 +42,7 @@ def part1(data, measure=False):
 
 
 def part2(data, measure=False):
+
     startTime = time.time()
     result_2 = None
 
@@ -51,6 +57,7 @@ def part2(data, measure=False):
 
 
 def runTests(test_sol_1, test_sol_2, path):
+
     test_res_1 = []
     test_res_2 = []
 
