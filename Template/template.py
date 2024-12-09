@@ -102,7 +102,7 @@ def main():
     test_sol_1 = []  # Todo put in test solutions part 1
     test_sol_2 = []  # Todo put in test solutions part 2
 
-    test = True  # Todo
+    test = True
 
     sol1 = sub1 = False  # Todo
     sol2 = sub2 = False  # Todo
