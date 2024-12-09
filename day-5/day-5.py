@@ -11,8 +11,8 @@ from aocd import get_data
 from aocd import submit
 
 import re
-from functools import cmp_to_key
 import math
+import copy
 
 day = 5
 path = ""
@@ -42,6 +42,23 @@ def is_valid(ordering: list[int], rules: set[tuple[int,int]]) -> bool:
                 return False
     return True
 
+def fix(ordering: list[int], rules: set[tuple[int,int]]) -> list[int]:
+
+    new_ordering = copy.deepcopy(ordering)
+
+    fix_applied = True
+    while fix_applied:
+        fix_applied = False
+        for i in range(len(new_ordering)-1):
+            for j in range(i+1,len(new_ordering)):
+                if (new_ordering[j], new_ordering[i]) in rules:
+                    temp = new_ordering[i]
+                    new_ordering[i] = new_ordering[j]
+                    new_ordering[j] = temp
+                    fix_applied = True
+
+    return new_ordering
+
 def get_middle(ordering: list[int]):
     if len(ordering) % 2 == 0:
         return ordering[len(ordering)/2]
@@ -67,16 +84,19 @@ def part1(data, measure=False):
 
 def part2(data, measure=False):
     startTime = time.time()
-    result_2 = None
+    result_2 = 0
 
-    input = parseInput(data)
+    smaller_greater, orderings = parseInput(data)
 
-    # Todo program part 2
+    for ordering in orderings:
+        if not is_valid(ordering, smaller_greater):
+            new_ordering = fix(ordering, smaller_greater)
+            result_2 += get_middle(new_ordering)
 
     executionTime = round(time.time() - startTime, 2)
     if measure:
         print("\nPart 2 took: " + str(executionTime) + " s")
-    return result_2
+    return str(result_2)
 
 
 def runTests(test_sol_1, test_sol_2, path):
