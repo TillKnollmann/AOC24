@@ -93,7 +93,6 @@ def get_next_position(agent: Agent, field: Field) -> Agent:
     next_agent = simulate_move(agent)
     if next_agent.x in field.obstacles and next_agent.y in field.obstacles[next_agent.x]:
         next_agent = turn_right(agent)
-        next_agent = simulate_move(next_agent)
 
     return next_agent
 
