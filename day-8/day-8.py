@@ -57,7 +57,7 @@ def parseInput(input: list[str]) -> dict[str, Instance]:
 
     return result
 
-def get_all_antinodes(instance: Instance) -> list[Point]:
+def get_all_antinodes(instance: Instance, is_part_2: bool) -> list[Point]:
 
     antinodes: set[Point] = set()
 
@@ -65,6 +65,9 @@ def get_all_antinodes(instance: Instance) -> list[Point]:
         for j in range(i + 1, len(instance.antennas)):
             for antinode in get_antinodes(instance.antennas[i], instance.antennas[j], instance):
                 antinodes.add(antinode)
+            if is_part_2:
+                for antinode in get_additional_antinodes(instance.antennas[i], instance.antennas[j], instance):
+                    antinodes.add(antinode)
 
     return antinodes
 
@@ -88,6 +91,23 @@ def get_antinodes(antenna_a: Point, antenna_b: Point, instance: Instance) -> lis
             valid_candidates.append(candidate)
 
     return valid_candidates
+
+def get_additional_antinodes(antenna_a: Point, antenna_b: Point, instance: Instance) -> list[Point]:
+
+    a_to_b = Point(antenna_b.x - antenna_a.x, antenna_b.y - antenna_a.y)
+    antinodes = []
+
+    current_node = Point(antenna_a.x, antenna_a.y)
+    while is_inside(current_node, instance.size_x, instance.size_y):
+        antinodes.append(current_node)
+        current_node = Point(current_node.x - a_to_b.x, current_node.y - a_to_b.y)
+
+    current_node = Point(antenna_b.x, antenna_b.y)
+    while is_inside(current_node, instance.size_x, instance.size_y):
+        antinodes.append(current_node)
+        current_node = Point(current_node.x + a_to_b.x, current_node.y + a_to_b.y)
+
+    return antinodes
 
 def is_inside(point: Point, size_x: int, size_y: int) -> bool:
 
@@ -118,7 +138,7 @@ def part1(data, measure=False):
     instances = parseInput(data)
 
     for instance in instances.values():
-        for antinode in get_all_antinodes(instance):
+        for antinode in get_all_antinodes(instance, False):
             antinodes.add(antinode)
 
     # print_all(instances, antinodes)
@@ -131,16 +151,18 @@ def part1(data, measure=False):
 
 def part2(data, measure=False):
     startTime = time.time()
-    result_2 = None
+    antinodes = set()
 
-    input = parseInput(data)
+    instances = parseInput(data)
 
-    # Todo program part 2
+    for instance in instances.values():
+        for antinode in get_all_antinodes(instance, True):
+            antinodes.add(antinode)
 
     executionTime = round(time.time() - startTime, 2)
     if measure:
         print("\nPart 2 took: " + str(executionTime) + " s")
-    return result_2
+    return str(len(antinodes))
 
 
 def runTests(test_sol_1, test_sol_2, path):
