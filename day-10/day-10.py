@@ -35,7 +35,7 @@ def parseInput(input: list[str]) -> Game:
 
     return Game(map, size_x, size_y)
 
-def get_reachable_summits(game: Game, x: int, y: int, known_paths: list[list[set[tuple[int,int]]]]) -> set[tuple[int,int]]:
+def get_reachable_summits(game: Game, x: int, y: int, reachable_summits: list[list[set[tuple[int,int]]]]) -> set[tuple[int,int]]:
 
     if game.map[x][y] == 9:
         return {(x,y)}
@@ -52,10 +52,31 @@ def get_reachable_summits(game: Game, x: int, y: int, known_paths: list[list[set
     for (neighbor_x, neightbor_y) in neighbors:
         if is_inside(game, neighbor_x, neightbor_y):
             if game.map[x][y] == game.map[neighbor_x][neightbor_y] - 1:
-                for summit in known_paths[neighbor_x][neightbor_y]:
+                for summit in reachable_summits[neighbor_x][neightbor_y]:
                     union.add(summit)
 
     return union
+
+def get_number_of_trails(game: Game, x: int, y: int, reachable_trails: list[list[set[tuple[int,int]]]]) -> set[tuple[int,int]]:
+
+    if game.map[x][y] == 9:
+        return 1
+
+    neighbors = [
+        (x-1, y),
+        (x+1, y),
+        (x, y-1),
+        (x, y+1)
+    ]
+
+    sum = 0
+
+    for (neighbor_x, neightbor_y) in neighbors:
+        if is_inside(game, neighbor_x, neightbor_y):
+            if game.map[x][y] == game.map[neighbor_x][neightbor_y] - 1:
+                sum += reachable_trails[neighbor_x][neightbor_y]
+
+    return sum
 
 def is_inside(game: Game, x: int, y: int) -> bool:
 
@@ -69,18 +90,18 @@ def part1(data, measure=False):
 
     game = parseInput(data)
 
-    known_paths = [[ None for y in range(game.size_y) ] for x in range(game.size_x)]
+    reachable_summits = [[ None for y in range(game.size_y) ] for x in range(game.size_x)]
 
     for height in reversed(range(10)):
         for x in range(game.size_x):
             for y in range(game.size_y):
                 if game.map[x][y] == height:
-                    known_paths[x][y] = get_reachable_summits(game, x, y, known_paths)
+                    reachable_summits[x][y] = get_reachable_summits(game, x, y, reachable_summits)
 
     for x in range(game.size_x):
         for y in range(game.size_y):
             if game.map[x][y] == 0:
-                result_1 += len(known_paths[x][y])
+                result_1 += len(reachable_summits[x][y])
 
     executionTime = round(time.time() - startTime, 2)
     if measure:
@@ -91,16 +112,27 @@ def part1(data, measure=False):
 def part2(data, measure=False):
 
     startTime = time.time()
-    result_2 = None
+    result_2 = 0
 
-    input = parseInput(data)
+    game = parseInput(data)
 
-    # Todo program part 2
+    reachable_trails = [[ None for y in range(game.size_y) ] for x in range(game.size_x)]
+
+    for height in reversed(range(10)):
+        for x in range(game.size_x):
+            for y in range(game.size_y):
+                if game.map[x][y] == height:
+                    reachable_trails[x][y] = get_number_of_trails(game, x, y, reachable_trails)
+
+    for x in range(game.size_x):
+        for y in range(game.size_y):
+            if game.map[x][y] == 0:
+                result_2 += reachable_trails[x][y]
 
     executionTime = round(time.time() - startTime, 2)
     if measure:
         print("\nPart 2 took: " + str(executionTime) + " s")
-    return result_2
+    return str(result_2)
 
 
 def runTests(test_sol_1, test_sol_2, path):
@@ -154,12 +186,12 @@ def main():
     path = "day-" + str(day) + "/"
 
     test_sol_1 = [ "36" ]
-    test_sol_2 = []  # Todo put in test solutions part 2
+    test_sol_2 = [ "81" ]
 
     test = True
 
-    sol1 = sub1 = True
-    sol2 = sub2 = False  # Todo
+    sol1 = sub1 = False
+    sol2 = sub2 = False
 
     if test:
         if not runTests(test_sol_1, test_sol_2, path):
