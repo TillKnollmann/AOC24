@@ -3,7 +3,6 @@ from aocd import get_data
 
 import time
 
-
 from importlib.machinery import SourceFileLoader
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
