@@ -16,14 +16,17 @@ def getTemplateCode(day):
     result += tab + tab + tab + "break\n\n"
     result += tab + tab + 'print(" ")\n'
     result += tab + tab + "executionTime = round(time.time() - startTime, 2)\n"
-    result += tab + tab + 'print("Execution time in seconds: " + str(executionTime))'
+    result += tab + tab + \
+        'print("Execution time in seconds: " + str(executionTime))'
     result += '\n\nif __name__ == "__main__":\n\tmain()'
     return result
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generator for AOC day solutions")
-    parser.add_argument('-d', '--day', type=int, help='The day to generate', required=True)
+    parser = argparse.ArgumentParser(
+        description="Generator for AOC day solutions")
+    parser.add_argument('-d', '--day', type=int,
+                        help='The day to generate', required=True)
     args = parser.parse_args()
 
     path = os.getcwd()
