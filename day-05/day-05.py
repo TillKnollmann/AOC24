@@ -1,75 +1,83 @@
+import copy
+import math
+import re
 from aocd import submit
 from aocd import get_data
 from datetime import date
 import numpy as np
 import time
 import pprint
-import math
-import re
-from copy import deepcopy
 
 from importlib.machinery import SourceFileLoader
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
 
-day = 11
+day = 5
 path = ""
 
 
-def parse_input(input: list[str]) -> dict[int, int]:
+def parse_input(input) -> tuple[set[tuple[int, int]], list[list[int]]]:
 
-    num_pattern = re.compile(r'\d+')
+    complete_input = "\n".join(input)
+    rules_input = complete_input.split("\n\n")[0]
+    orderings_input = complete_input.split("\n\n")[1]
 
-    result = dict()
+    number_pattern = re.compile(r'\d+')
 
-    for num_string in num_pattern.findall(input[0]):
-        num = int(num_string)
-        if not num in result:
-            result[num] = 0
-        result[num] = 1
+    smaller_to_greater = set()
+    for rule in rules_input.split("\n"):
+        numbers = number_pattern.findall(rule)
+        smaller_to_greater.add((int(numbers[0]), int(numbers[1])))
 
-    return result
+    orderings = [[int(num) for num in number_pattern.findall(ordering_line)]
+                 for ordering_line in orderings_input.split("\n")]
+
+    return smaller_to_greater, orderings
 
 
-def apply_rules_to_stone(stone: int) -> list[int]:
+def is_valid(ordering: list[int], rules: set[tuple[int, int]]) -> bool:
+    for i in range(len(ordering)-1):
+        for j in range(i+1, len(ordering)):
+            if (ordering[j], ordering[i]) in rules:
+                return False
+    return True
 
-    if stone == 0:
-        return [1]
-    elif len(str(stone)) % 2 == 0:
-        stone_str = str(stone)
-        stone_1 = int(stone_str[:int(len(stone_str)/2)])
-        stone_2 = int(stone_str[int(len(stone_str)/2):])
-        return [stone_1, stone_2]
+
+def fix(ordering: list[int], rules: set[tuple[int, int]]) -> list[int]:
+
+    new_ordering = copy.deepcopy(ordering)
+
+    fix_applied = True
+    while fix_applied:
+        fix_applied = False
+        for i in range(len(new_ordering)-1):
+            for j in range(i+1, len(new_ordering)):
+                if (new_ordering[j], new_ordering[i]) in rules:
+                    temp = new_ordering[i]
+                    new_ordering[i] = new_ordering[j]
+                    new_ordering[j] = temp
+                    fix_applied = True
+
+    return new_ordering
+
+
+def get_middle(ordering: list[int]):
+    if len(ordering) % 2 == 0:
+        return ordering[len(ordering)/2]
     else:
-        return [stone*2024]
-
-
-def blink(stones: dict[int, int]) -> dict[int, int]:
-
-    new_stones = dict()
-
-    for stone, frequency in stones.items():
-        successors = apply_rules_to_stone(stone)
-        for successor in successors:
-            if not successor in new_stones:
-                new_stones[successor] = 0
-            new_stones[successor] += frequency
-
-    return new_stones
+        return ordering[math.floor(len(ordering)/2)]
 
 
 def part_1(data, measure=False):
-
     startTime = time.time()
-    result_1 = None
+    result_1 = 0
 
-    stones = parse_input(data)
+    smaller_greater, orderings = parse_input(data)
 
-    for i in range(25):
-        stones = blink(stones)
-
-    result_1 = sum(stones.values())
+    for ordering in orderings:
+        if is_valid(ordering, smaller_greater):
+            result_1 += get_middle(ordering)
 
     executionTime = round(time.time() - startTime, 2)
     if measure:
@@ -78,16 +86,15 @@ def part_1(data, measure=False):
 
 
 def part_2(data, measure=False):
-
     startTime = time.time()
-    result_2 = None
+    result_2 = 0
 
-    stones = parse_input(data)
+    smaller_greater, orderings = parse_input(data)
 
-    for i in range(75):
-        stones = blink(stones)
-
-    result_2 = sum(stones.values())
+    for ordering in orderings:
+        if not is_valid(ordering, smaller_greater):
+            new_ordering = fix(ordering, smaller_greater)
+            result_2 += get_middle(new_ordering)
 
     executionTime = round(time.time() - startTime, 2)
     if measure:
@@ -96,7 +103,6 @@ def part_2(data, measure=False):
 
 
 def run_tests(test_sol_1, test_sol_2, path):
-
     test_res_1 = []
     test_res_2 = []
 
@@ -147,8 +153,8 @@ def main():
     global path
     path = "day-" + str(day).zfill(2) + "/"
 
-    test_sol_1 = ["55312"]
-    test_sol_2 = ["65601038650482"]
+    test_sol_1 = ["143"]
+    test_sol_2 = ["123"]
 
     test = True
 

@@ -14,10 +14,10 @@ def main():
 
     path = os.getcwd()
     template_path = os.path.join(path, "template")
-    current_path = os.path.join(path, "day-" + str(args.day))
+    current_path = os.path.join(path, "day-" + str(args.day).zfill(2))
     if not os.path.exists(current_path):
         shutil.copytree(template_path, current_path)
-        day_name = "day-" + str(args.day) + ".py"
+        day_name = "day-" + str(args.day).zfill(2) + ".py"
         os.rename(
             str(current_path) + "/template.py", str(current_path) + "/" + day_name
         )

@@ -11,51 +11,99 @@ from importlib.machinery import SourceFileLoader
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
 
-day = 3
+day = 2
 path = ""
 
 
 def parse_input(input):
-    result = None
+    result = []
 
-    result = "".join(input)
+    pattern = re.compile(r'\d+')
+
+    for line in input:
+        result.append(list(int(num) for num in pattern.findall(line)))
 
     return result
 
 
-def get_enabled_multiplications(memory: str) -> list[str]:
-
-    enabled = True
-
-    segment_memory = re.split(r'(do\(\)|don\'t\(\))', memory)
-
-    enabled_multiplications = []
-    for segment in segment_memory:
-        if segment.startswith("don't()"):
-            enabled = False
-        elif segment.startswith("do()"):
-            enabled = True
-        if enabled:
-            multiplications = get_multiplications(segment)
-            for mult in multiplications:
-                enabled_multiplications.append(mult)
-
-    return enabled_multiplications
+def is_level_safe_part_1(level: list[int]) -> bool:
+    (violations, violations_reversed) = get_all_violations(level)
+    return len(violations) == 0 or len(violations_reversed) == 0
 
 
-def get_multiplications(memory: str) -> list[str]:
+def is_level_safe_part_2(level: list[int]) -> bool:
 
-    pattern = re.compile(r'mul\([0-9]{1,3},[0-9]{1,3}\)')
+    (violations, violations_reversed) = get_all_violations(level)
+    if len(violations) > 2 and len(violations_reversed) > 2:
+        return False
+    elif len(violations) == 0 or len(violations_reversed) == 0:
+        return True
+    else:
+        if len(violations) <= 2:
+            if can_level_be_fixed(level, violations):
+                return True
+        if len(violations_reversed) <= 2:
+            reversed = [num for num in level]
+            reversed.reverse()
+            if can_level_be_fixed(reversed, violations_reversed):
+                return True
+        return False
 
-    return pattern.findall(memory)
+
+def can_level_be_fixed(level: list[int], violations: list[int]):
+    if len(violations) > 2:
+        return False
+    if len(violations) == 0:
+        return True
+    adapted = cutout(level, violations[0])
+    if (is_level_safe_part_1(adapted)):
+        return True
+    elif (violations[0] + 1 < len(level)):
+        adapted = cutout(level, violations[0]+1)
+        if is_level_safe_part_1(adapted):
+            return True
+    elif (violations[0] + 2 < len(level)):
+        adapted = cutout(level, violations[0]+2)
+        if is_level_safe_part_1(adapted):
+            return True
+    else:
+        return False
 
 
-def interpret_multiplication(mult: str) -> int:
+def cutout(level: list[int], index: int) -> list[int]:
+    if index == 0:
+        return level[1:]
+    elif index == len(level)-1:
+        return level[:len(level)-1]
+    else:
+        return level[:index] + level[index+1:]
 
-    pattern = re.compile(r'\d+')
 
-    numbers = [int(num) for num in pattern.findall(mult)]
-    return numbers[0] * numbers[1]
+def get_all_violations(level: list[int]) -> list[int]:
+
+    violations = get_violations(level)
+    reversed = [num for num in level]
+    reversed.reverse()
+    violations_reversed = get_violations(reversed)
+
+    return (violations, violations_reversed)
+
+
+def get_violations(level: list[int]) -> list[int]:
+
+    # Assumption: level is ascending
+    violations = []
+    for i in range(0, len(level)-1):
+        if not is_pair_safe(level[i], level[i+1]):
+            violations.append(i)
+
+    return violations
+
+
+def is_pair_safe(first: int, second: int) -> bool:
+    if first >= second or second - first > 3:
+        return False
+    return True
 
 
 def part_1(data, measure=False):
@@ -64,9 +112,9 @@ def part_1(data, measure=False):
 
     input = parse_input(data)
 
-    multiplications = get_multiplications(input)
-    for multiplication in multiplications:
-        result_1 += interpret_multiplication(multiplication)
+    for level in input:
+        if is_level_safe_part_1(level):
+            result_1 += 1
 
     executionTime = round(time.time() - startTime, 2)
     if measure:
@@ -80,9 +128,9 @@ def part_2(data, measure=False):
 
     input = parse_input(data)
 
-    multiplications = get_enabled_multiplications(input)
-    for multiplication in multiplications:
-        result_2 += interpret_multiplication(multiplication)
+    for level in input:
+        if is_level_safe_part_2(level):
+            result_2 += 1
 
     executionTime = round(time.time() - startTime, 2)
     if measure:
@@ -139,10 +187,10 @@ def run_tests(test_sol_1, test_sol_2, path):
 
 def main():
     global path
-    path = "day-" + str(day) + "/"
+    path = "day-" + str(day).zfill(2) + "/"
 
-    test_sol_1 = ["161", "161"]
-    test_sol_2 = ["161", "48"]
+    test_sol_1 = ["2"]
+    test_sol_2 = ["4"]
 
     test = True
 

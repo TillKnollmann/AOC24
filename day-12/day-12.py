@@ -270,7 +270,7 @@ def run_tests(test_sol_1, test_sol_2, path):
 
 def main():
     global path
-    path = "day-" + str(day) + "/"
+    path = "day-" + str(day).zfill(2) + "/"
 
     test_sol_1 = ["140", "772", "1930", "692", "1184"]
     test_sol_2 = ["80", "436", "1206", "236", "368"]

@@ -1,5 +1,3 @@
-import copy
-import math
 import re
 from aocd import submit
 from aocd import get_data
@@ -13,71 +11,62 @@ from importlib.machinery import SourceFileLoader
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
 
-day = 5
+day = 3
 path = ""
 
 
-def parse_input(input) -> tuple[set[tuple[int, int]], list[list[int]]]:
+def parse_input(input):
+    result = None
 
-    complete_input = "\n".join(input)
-    rules_input = complete_input.split("\n\n")[0]
-    orderings_input = complete_input.split("\n\n")[1]
+    result = "".join(input)
 
-    number_pattern = re.compile(r'\d+')
-
-    smaller_to_greater = set()
-    for rule in rules_input.split("\n"):
-        numbers = number_pattern.findall(rule)
-        smaller_to_greater.add((int(numbers[0]), int(numbers[1])))
-
-    orderings = [[int(num) for num in number_pattern.findall(ordering_line)]
-                 for ordering_line in orderings_input.split("\n")]
-
-    return smaller_to_greater, orderings
+    return result
 
 
-def is_valid(ordering: list[int], rules: set[tuple[int, int]]) -> bool:
-    for i in range(len(ordering)-1):
-        for j in range(i+1, len(ordering)):
-            if (ordering[j], ordering[i]) in rules:
-                return False
-    return True
+def get_enabled_multiplications(memory: str) -> list[str]:
+
+    enabled = True
+
+    segment_memory = re.split(r'(do\(\)|don\'t\(\))', memory)
+
+    enabled_multiplications = []
+    for segment in segment_memory:
+        if segment.startswith("don't()"):
+            enabled = False
+        elif segment.startswith("do()"):
+            enabled = True
+        if enabled:
+            multiplications = get_multiplications(segment)
+            for mult in multiplications:
+                enabled_multiplications.append(mult)
+
+    return enabled_multiplications
 
 
-def fix(ordering: list[int], rules: set[tuple[int, int]]) -> list[int]:
+def get_multiplications(memory: str) -> list[str]:
 
-    new_ordering = copy.deepcopy(ordering)
+    pattern = re.compile(r'mul\([0-9]{1,3},[0-9]{1,3}\)')
 
-    fix_applied = True
-    while fix_applied:
-        fix_applied = False
-        for i in range(len(new_ordering)-1):
-            for j in range(i+1, len(new_ordering)):
-                if (new_ordering[j], new_ordering[i]) in rules:
-                    temp = new_ordering[i]
-                    new_ordering[i] = new_ordering[j]
-                    new_ordering[j] = temp
-                    fix_applied = True
-
-    return new_ordering
+    return pattern.findall(memory)
 
 
-def get_middle(ordering: list[int]):
-    if len(ordering) % 2 == 0:
-        return ordering[len(ordering)/2]
-    else:
-        return ordering[math.floor(len(ordering)/2)]
+def interpret_multiplication(mult: str) -> int:
+
+    pattern = re.compile(r'\d+')
+
+    numbers = [int(num) for num in pattern.findall(mult)]
+    return numbers[0] * numbers[1]
 
 
 def part_1(data, measure=False):
     startTime = time.time()
     result_1 = 0
 
-    smaller_greater, orderings = parse_input(data)
+    input = parse_input(data)
 
-    for ordering in orderings:
-        if is_valid(ordering, smaller_greater):
-            result_1 += get_middle(ordering)
+    multiplications = get_multiplications(input)
+    for multiplication in multiplications:
+        result_1 += interpret_multiplication(multiplication)
 
     executionTime = round(time.time() - startTime, 2)
     if measure:
@@ -89,12 +78,11 @@ def part_2(data, measure=False):
     startTime = time.time()
     result_2 = 0
 
-    smaller_greater, orderings = parse_input(data)
+    input = parse_input(data)
 
-    for ordering in orderings:
-        if not is_valid(ordering, smaller_greater):
-            new_ordering = fix(ordering, smaller_greater)
-            result_2 += get_middle(new_ordering)
+    multiplications = get_enabled_multiplications(input)
+    for multiplication in multiplications:
+        result_2 += interpret_multiplication(multiplication)
 
     executionTime = round(time.time() - startTime, 2)
     if measure:
@@ -151,10 +139,10 @@ def run_tests(test_sol_1, test_sol_2, path):
 
 def main():
     global path
-    path = "day-" + str(day) + "/"
+    path = "day-" + str(day).zfill(2) + "/"
 
-    test_sol_1 = ["143"]
-    test_sol_2 = ["123"]
+    test_sol_1 = ["161", "161"]
+    test_sol_2 = ["161", "48"]
 
     test = True
 

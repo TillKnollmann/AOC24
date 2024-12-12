@@ -150,7 +150,7 @@ def part_2(data, measure=False):
     path, candidate_positions = get_visited_positions(agent, field)
     valid_positions = set()
 
-    for candidate_position in tqdm(candidate_positions):
+    for candidate_position in tqdm(candidate_positions, disable=len(candidate_positions) <= 100):
         new_obstacles = copy.deepcopy(field.obstacles)
         new_obstacles[candidate_position[0]][candidate_position[1]] = True
         new_field = Field(new_obstacles, field.size_x, field.size_y)
@@ -212,7 +212,7 @@ def run_tests(test_sol_1, test_sol_2, path):
 
 def main():
     global path
-    path = "day-" + str(day) + "/"
+    path = "day-" + str(day).zfill(2) + "/"
 
     test_sol_1 = ["41"]
     test_sol_2 = ["6"]
