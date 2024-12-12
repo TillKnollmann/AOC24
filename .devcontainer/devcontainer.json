@@ -18,7 +18,8 @@
 				"ms-python.debugpy",
 				"donjayamanne.python-environment-manager",
 				"donjayamanne.python-extension-pack",
-				"KevinRose.vsc-python-indent"
+				"KevinRose.vsc-python-indent",
+				"njqdev.vscode-python-typehint"
 			]
 		}
 	}
