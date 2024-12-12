@@ -84,7 +84,7 @@ def evaluate(value_a: int, value_b: int, operator: Operator) -> int:
             return int(str(value_a) + str(value_b))
 
 
-def part1(data, measure=False):
+def part_1(data, measure=False):
     startTime = time.time()
     result_1 = 0
 
@@ -100,7 +100,7 @@ def part1(data, measure=False):
     return str(result_1)
 
 
-def part2(data, measure=False):
+def part_2(data, measure=False):
     startTime = time.time()
     result_2 = 0
 
@@ -116,7 +116,7 @@ def part2(data, measure=False):
     return str(result_2)
 
 
-def runTests(test_sol_1, test_sol_2, path):
+def run_tests(test_sol_1, test_sol_2, path):
     test_res_1 = []
     test_res_2 = []
 
@@ -124,8 +124,8 @@ def runTests(test_sol_1, test_sol_2, path):
 
     paths = lib.get_test_paths(path)
 
-    test_res_1 += list(map(part1, map(lib.get_data_lines, paths)))
-    test_res_2 += list(map(part2, map(lib.get_data_lines, paths)))
+    test_res_1 += list(map(part_1, map(lib.get_data_lines, paths)))
+    test_res_2 += list(map(part_2, map(lib.get_data_lines, paths)))
 
     success_1 = [(test_sol_1[i] == test_res_1[i])
                  for i in range(len(test_sol_1))]
@@ -176,17 +176,17 @@ def main():
     sol2 = sub2 = False
 
     if test:
-        if not runTests(test_sol_1, test_sol_2, path):
+        if not run_tests(test_sol_1, test_sol_2, path):
             sub1 = sub2 = False
 
     data_main = get_data(day=day, year=2024).splitlines()
 
     if sol1:
-        result_1 = part1(data_main, True)
+        result_1 = part_1(data_main, True)
         print("Result Part 1: " + str(result_1))
 
     if sol2:
-        result_2 = part2(data_main, True)
+        result_2 = part_2(data_main, True)
         print("Result Part 2: " + str(result_2))
 
     print("\n")
