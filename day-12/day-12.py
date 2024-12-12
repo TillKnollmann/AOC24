@@ -1,3 +1,5 @@
+from aocd import submit
+from aocd import get_data
 from datetime import date
 import numpy as np
 import time
@@ -10,71 +12,71 @@ from importlib.machinery import SourceFileLoader
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
-from aocd import get_data
-from aocd import submit
 
 day = 12
 path = ""
 
 invalid_token = "."
 
-class Map:
 
-    def __init__(self, fields: list[list[int]], size_x: int, size_y: int):
-        self.fields = fields
-        self.size_x = size_x
-        self.size_y = size_y
+class Area(list[list[int]]):
+    pass
 
 
-def parseInput(input: list[str]) -> Map:
+def parseInput(input: list[str]) -> Area:
 
-    fields = []
+    area = []
 
     for x in range(len(input[0])):
         column = []
         for y in range(len(input)):
             column.append(input[y][x])
-        fields.append(column)
+        area.append(column)
 
-    size_x = len(input[0])
-    size_y = len(input)
+    return area
 
-    return Map(fields, size_x, size_y)
 
-def is_inside(x: int, y: int, map: Map) -> bool:
+def is_inside(x: int, y: int, area: Area) -> bool:
 
-    return x >= 0 and x < map.size_x and y >= 0 and y < map.size_y
+    return x >= 0 and x < len(area[0]) and y >= 0 and y < len(area[0])
 
-def get_price(x: int, y: int, map: Map) -> tuple[int, Map]:
 
-    if map.fields[x][y] == invalid_token:
-        return (0, map)
+def get_price(x: int, y: int, area: Area, part_two: bool) -> tuple[int, Area]:
 
-    area = [[ 0 for y in range(map.size_y)] for x in range(map.size_x)]
-    perimeter = [[ 0 for y in range(map.size_y)] for x in range(map.size_x)]
-    new_fields = [[ map.fields[x][y] for y in range(map.size_y)] for x in range(map.size_x)]
+    if area[x][y] == invalid_token:
+        return (0, area)
 
-    visit(x, y, map, area, perimeter, new_fields, map.fields[x][y])
+    area_of_token = [[0 for y in range(len(area[x]))]
+                     for x in range(len(area))]
+    perimeter = [[0 for y in range(len(area[x]))] for x in range(len(area))]
+    new_area = [[area[x][y]
+                 for y in range(len(area[x]))] for x in range(len(area))]
 
-    total_area = sum([sum(line) for line in area])
+    visit(x, y, area, area_of_token, perimeter, new_area, area[x][y])
+
+    total_area_of_token = sum([sum(line) for line in area_of_token])
     total_perimeter = sum([sum(line) for line in perimeter])
 
-    return (total_area * total_perimeter, Map(new_fields, map.size_x, map.size_y))
+    if part_two:
+        total_perimeter = get_number_of_sides(area_of_token)
 
-def visit(x: int, y: int, map: Map, area: list[list[int]], perimeter: list[list[int]], new_fields: list[list[int]], current_id: str) -> None:
+    return (total_area_of_token * total_perimeter, new_area)
 
-    if not is_inside(x, y, map):
+
+def visit(x: int, y: int, area: Area, area_of_token: Area, perimeter: Area, new_area: Area, token: str) -> None:
+
+    if not is_inside(x, y, area):
         return
 
-    if new_fields[x][y] == invalid_token:
+    if new_area[x][y] == invalid_token:
         return
 
-    if not map.fields[x][y] == current_id:
+    if not area[x][y] == token:
         return
 
-    perimeter[x][y] = get_perimeter(x, y, map)
-    area[x][y] = 1
-    new_fields[x][y] = invalid_token
+    perimeter[x][y] = get_perimeter(x, y, area)
+    area_of_token[x][y] = 1
+    new_area[x][y] = invalid_token
 
     neighbors = [
         (x-1, y),
@@ -84,9 +86,10 @@ def visit(x: int, y: int, map: Map, area: list[list[int]], perimeter: list[list[
     ]
 
     for neigh_x, neigh_y in neighbors:
-        visit(neigh_x, neigh_y, map, area, perimeter, new_fields, current_id)
+        visit(neigh_x, neigh_y, area, area_of_token, perimeter, new_area, token)
 
-def get_perimeter(x: int, y: int, map: Map) -> int:
+
+def get_perimeter(x: int, y: int, area: Area) -> int:
 
     neighbors = [
         (x-1, y),
@@ -98,12 +101,81 @@ def get_perimeter(x: int, y: int, map: Map) -> int:
     perimeter = 0
 
     for neigh_x, neigh_y in neighbors:
-        if not is_inside(neigh_x, neigh_y, map):
+        if not is_inside(neigh_x, neigh_y, area):
             perimeter += 1
-        elif map.fields[neigh_x][neigh_y] != map.fields[x][y]:
+        elif area[neigh_x][neigh_y] != area[x][y]:
             perimeter += 1
 
     return perimeter
+
+
+def get_number_of_sides(area: Area) -> int:
+
+    adapted_area = [[area[x][y]
+                     for y in range(len(area[x]))] for x in range(len(area))]
+    adapted_area = trim(adapted_area)
+    adapted_area = add_border(adapted_area)
+
+    corner_patterns = [
+        ([(0, 0), (1, 0), (0, 1)], [(1, 1)]),
+        ([(0, 0), (1, 0), (1, 1)], [(0, 1)]),
+        ([(0, 0), (0, 1), (1, 1)], [(1, 0)]),
+        ([(1, 0), (0, 1), (1, 1)], [(0, 0)]),
+        ([(1, 1)], [(0, 0), (1, 0), (0, 1)]),
+        ([(0, 1)], [(0, 0), (1, 0), (1, 1)]),
+        ([(1, 0)], [(0, 0), (0, 1), (1, 1)]),
+        ([(0, 0)], [(1, 0), (0, 1), (1, 1)])
+    ]
+    double_patterns = [
+        ([(0, 0), (1, 1)], [(1, 0), (0, 1)]),
+        ([(1, 0), (0, 1)], [(0, 0), (1, 1)])
+    ]
+
+    corners = 0
+
+    for x in range(len(adapted_area) - 1):
+        for y in range(len(adapted_area[x]) - 1):
+            for pattern_out, pattern_in in corner_patterns:
+                if all(adapted_area[x + dx][y + dy] == 0 for dx, dy in pattern_out) and all(adapted_area[x + dx][y + dy] == 1 for dx, dy in pattern_in):
+                    corners += 1
+            for pattern_out, pattern_in in double_patterns:
+                if all(adapted_area[x + dx][y + dy] == 0 for dx, dy in pattern_out) and all(adapted_area[x + dx][y + dy] == 1 for dx, dy in pattern_in):
+                    corners += 2
+
+    return corners
+
+
+def trim(area: Area) -> Area:
+
+    size_x = len(area)
+    size_y = len(area[0])
+
+    min_x = size_x
+    max_x = 0
+    min_y = size_y
+    max_y = 0
+
+    for x in range(size_x):
+        for y in range(size_y):
+            if area[x][y] == 1:
+                min_x = min(min_x, x)
+                max_x = max(max_x, x)
+                min_y = min(min_y, y)
+                max_y = max(max_y, y)
+
+    return [x[min_y:max_y+1] for x in area[min_x:max_x + 1]]
+
+
+def add_border(area: Area) -> Area:
+
+    new_area = [[0 for _ in range(len(area[0]) + 2)]
+                for _ in range(len(area) + 2)]
+
+    for x in range(len(area)):
+        for y in range(len(area[x])):
+            new_area[x+1][y+1] = area[x][y]
+
+    return new_area
 
 
 def part1(data, measure=False):
@@ -111,13 +183,13 @@ def part1(data, measure=False):
     startTime = time.time()
     result_1 = 0
 
-    map = parseInput(data)
+    area = parseInput(data)
 
-    for x in range(map.size_x):
-        for y in range(map.size_y):
-            price, new_map = get_price(x, y, map)
+    for x in range(len(area)):
+        for y in range(len(area[x])):
+            price, new_area = get_price(x, y, area, False)
             result_1 += price
-            map = new_map
+            area = new_area
 
     executionTime = round(time.time() - startTime, 2)
     if measure:
@@ -128,16 +200,20 @@ def part1(data, measure=False):
 def part2(data, measure=False):
 
     startTime = time.time()
-    result_2 = None
+    result_2 = 0
 
-    input = parseInput(data)
+    area = parseInput(data)
 
-    # Todo program part 2
+    for x in range(len(area)):
+        for y in range(len(area[x])):
+            price, new_area = get_price(x, y, area, True)
+            result_2 += price
+            area = new_area
 
     executionTime = round(time.time() - startTime, 2)
     if measure:
         print("\nPart 2 took: " + str(executionTime) + " s")
-    return result_2
+    return str(result_2)
 
 
 def runTests(test_sol_1, test_sol_2, path):
@@ -152,8 +228,10 @@ def runTests(test_sol_1, test_sol_2, path):
     test_res_1 += list(map(part1, map(lib.getDataLines, paths)))
     test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
 
-    success_1 = [(test_sol_1[i] == test_res_1[i]) for i in range(len(test_sol_1))]
-    success_2 = [(test_sol_2[i] == test_res_2[i]) for i in range(len(test_sol_2))]
+    success_1 = [(test_sol_1[i] == test_res_1[i])
+                 for i in range(len(test_sol_1))]
+    success_2 = [(test_sol_2[i] == test_res_2[i])
+                 for i in range(len(test_sol_2))]
 
     for i in range(len(test_sol_1)):
         if success_1[i]:
@@ -190,13 +268,13 @@ def main():
     global path
     path = "day-" + str(day) + "/"
 
-    test_sol_1 = [ "140", "772", "1930" ]
-    test_sol_2 = []  # Todo put in test solutions part 2
+    test_sol_1 = ["140", "772", "1930", "692", "1184"]
+    test_sol_2 = ["80", "436", "1206", "236", "368"]
 
     test = True
 
     sol1 = sub1 = False
-    sol2 = sub2 = False  # Todo
+    sol2 = sub2 = False
 
     if test:
         if not runTests(test_sol_1, test_sol_2, path):
@@ -223,4 +301,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
