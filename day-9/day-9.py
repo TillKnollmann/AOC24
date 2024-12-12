@@ -1,3 +1,6 @@
+import math
+from aocd import submit
+from aocd import get_data
 from datetime import date
 import numpy as np
 import time
@@ -7,13 +10,10 @@ from importlib.machinery import SourceFileLoader
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
-from aocd import get_data
-from aocd import submit
 
 day = 9
 path = ""
 
-import math
 
 class Block():
 
@@ -39,6 +39,7 @@ def parseInput(input: list[str]) -> list[Block]:
 
     return result
 
+
 def get_checksum(blocks: list[Block]) -> int:
 
     position: int = 0
@@ -53,10 +54,12 @@ def get_checksum(blocks: list[Block]) -> int:
 
     return checksum
 
+
 def get_block_checksum(position: int, size: int, identifier: int) -> int:
 
     # checksum is position * size * identifier + (((size - 1)^2 + size - 1) / 2) * identifier
     return int(position * size * identifier + ((math.pow(size - 1, 2) + size - 1) / 2) * identifier)
+
 
 def fill_free_space_part_1(blocks: list[Block]) -> list[Block]:
 
@@ -65,7 +68,7 @@ def fill_free_space_part_1(blocks: list[Block]) -> list[Block]:
     while len(blocks) > 0:
         first_block = blocks.pop(0)
         if not first_block.is_free:
-            filled.append(first_block) # append file
+            filled.append(first_block)  # append file
         else:
             while first_block.size > 0 and len(blocks) > 0:
                 # (partially) append last file
@@ -76,10 +79,11 @@ def fill_free_space_part_1(blocks: list[Block]) -> list[Block]:
                 first_block.size -= used_size
                 last_block.size -= used_size
                 if last_block.size > 0:
-                    blocks.append(last_block) # last file was not used completely
+                    # last file was not used completely
+                    blocks.append(last_block)
                 else:
                     if len(blocks) > 0:
-                        blocks.pop() # last file was used completely -> remove last free space
+                        blocks.pop()  # last file was used completely -> remove last free space
 
     return filled
 
@@ -97,6 +101,7 @@ def fill_free_space_part_2(blocks: list[Block]) -> list[Block]:
         disk = move_block(disk, file)
 
     return disk
+
 
 def move_block(disk: list[Block], considered_block: Block) -> list[Block]:
 
@@ -121,9 +126,11 @@ def move_block(disk: list[Block], considered_block: Block) -> list[Block]:
             new_disk.append(considered_block)
             considered_inserted = True
             if block.size > considered_block.size:
-                new_disk.append(Block(True, block.size - considered_block.size, -1))
+                new_disk.append(
+                    Block(True, block.size - considered_block.size, -1))
 
     return new_disk
+
 
 def print_disk(blocks: list[Block]) -> None:
 
@@ -135,6 +142,7 @@ def print_disk(blocks: list[Block]) -> None:
             dist.append("".join([str(block.id) for i in range(block.size)]))
 
     print("".join(dist))
+
 
 def part1(data, measure=False):
     startTime = time.time()
@@ -183,8 +191,10 @@ def runTests(test_sol_1, test_sol_2, path):
     test_res_1 += list(map(part1, map(lib.getDataLines, paths)))
     test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
 
-    success_1 = [(test_sol_1[i] == test_res_1[i]) for i in range(len(test_sol_1))]
-    success_2 = [(test_sol_2[i] == test_res_2[i]) for i in range(len(test_sol_2))]
+    success_1 = [(test_sol_1[i] == test_res_1[i])
+                 for i in range(len(test_sol_1))]
+    success_2 = [(test_sol_2[i] == test_res_2[i])
+                 for i in range(len(test_sol_2))]
 
     for i in range(len(test_sol_1)):
         if success_1[i]:
@@ -221,8 +231,8 @@ def main():
     global path
     path = "day-" + str(day) + "/"
 
-    test_sol_1 = [ "1928" ]
-    test_sol_2 = [ "2858" ]
+    test_sol_1 = ["1928"]
+    test_sol_2 = ["2858"]
 
     test = True
 
@@ -254,4 +264,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

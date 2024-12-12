@@ -1,3 +1,5 @@
+from aocd import submit
+from aocd import get_data
 from datetime import date
 import numpy as np
 import time
@@ -10,14 +12,12 @@ from importlib.machinery import SourceFileLoader
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
-from aocd import get_data
-from aocd import submit
 
 day = 11
 path = ""
 
 
-def parseInput(input: list[str]) -> dict[int,int]:
+def parseInput(input: list[str]) -> dict[int, int]:
 
     num_pattern = re.compile(r'\d+')
 
@@ -31,19 +31,21 @@ def parseInput(input: list[str]) -> dict[int,int]:
 
     return result
 
+
 def apply_rules_to_stone(stone: int) -> list[int]:
 
     if stone == 0:
-        return [ 1 ]
-    elif len(str(stone)) %2 == 0:
+        return [1]
+    elif len(str(stone)) % 2 == 0:
         stone_str = str(stone)
         stone_1 = int(stone_str[:int(len(stone_str)/2)])
         stone_2 = int(stone_str[int(len(stone_str)/2):])
-        return [ stone_1, stone_2 ]
+        return [stone_1, stone_2]
     else:
-        return [ stone*2024 ]
+        return [stone*2024]
 
-def blink(stones: dict[int,int]) -> dict[int,int]:
+
+def blink(stones: dict[int, int]) -> dict[int, int]:
 
     new_stones = dict()
 
@@ -105,8 +107,10 @@ def runTests(test_sol_1, test_sol_2, path):
     test_res_1 += list(map(part1, map(lib.getDataLines, paths)))
     test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
 
-    success_1 = [(test_sol_1[i] == test_res_1[i]) for i in range(len(test_sol_1))]
-    success_2 = [(test_sol_2[i] == test_res_2[i]) for i in range(len(test_sol_2))]
+    success_1 = [(test_sol_1[i] == test_res_1[i])
+                 for i in range(len(test_sol_1))]
+    success_2 = [(test_sol_2[i] == test_res_2[i])
+                 for i in range(len(test_sol_2))]
 
     for i in range(len(test_sol_1)):
         if success_1[i]:
@@ -143,8 +147,8 @@ def main():
     global path
     path = "day-" + str(day) + "/"
 
-    test_sol_1 = [ "55312" ]
-    test_sol_2 = [ "65601038650482" ]
+    test_sol_1 = ["55312"]
+    test_sol_2 = ["65601038650482"]
 
     test = True
 
@@ -176,4 +180,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

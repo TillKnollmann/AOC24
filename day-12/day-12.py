@@ -46,11 +46,9 @@ def get_price(x: int, y: int, area: Area, part_two: bool) -> tuple[int, Area]:
     if area[x][y] == invalid_token:
         return (0, area)
 
-    area_of_token = [[0 for y in range(len(area[x]))]
-                     for x in range(len(area))]
+    area_of_token = [[0 for y in range(len(area[x]))] for x in range(len(area))]
     perimeter = [[0 for y in range(len(area[x]))] for x in range(len(area))]
-    new_area = [[area[x][y]
-                 for y in range(len(area[x]))] for x in range(len(area))]
+    new_area = [[area[x][y] for y in range(len(area[x]))] for x in range(len(area))]
 
     visit(x, y, area, area_of_token, perimeter, new_area, area[x][y])
 
@@ -63,7 +61,15 @@ def get_price(x: int, y: int, area: Area, part_two: bool) -> tuple[int, Area]:
     return (total_area_of_token * total_perimeter, new_area)
 
 
-def visit(x: int, y: int, area: Area, area_of_token: Area, perimeter: Area, new_area: Area, token: str) -> None:
+def visit(
+    x: int,
+    y: int,
+    area: Area,
+    area_of_token: Area,
+    perimeter: Area,
+    new_area: Area,
+    token: str,
+) -> None:
 
     if not is_inside(x, y, area):
         return
@@ -78,12 +84,7 @@ def visit(x: int, y: int, area: Area, area_of_token: Area, perimeter: Area, new_
     area_of_token[x][y] = 1
     new_area[x][y] = invalid_token
 
-    neighbors = [
-        (x-1, y),
-        (x+1, y),
-        (x, y-1),
-        (x, y+1)
-    ]
+    neighbors = [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]
 
     for neigh_x, neigh_y in neighbors:
         visit(neigh_x, neigh_y, area, area_of_token, perimeter, new_area, token)
@@ -91,12 +92,7 @@ def visit(x: int, y: int, area: Area, area_of_token: Area, perimeter: Area, new_
 
 def get_perimeter(x: int, y: int, area: Area) -> int:
 
-    neighbors = [
-        (x-1, y),
-        (x+1, y),
-        (x, y-1),
-        (x, y+1)
-    ]
+    neighbors = [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]
 
     perimeter = 0
 
@@ -111,8 +107,7 @@ def get_perimeter(x: int, y: int, area: Area) -> int:
 
 def get_number_of_sides(area: Area) -> int:
 
-    adapted_area = [[area[x][y]
-                     for y in range(len(area[x]))] for x in range(len(area))]
+    adapted_area = [[area[x][y] for y in range(len(area[x]))] for x in range(len(area))]
     adapted_area = trim(adapted_area)
     adapted_area = add_border(adapted_area)
 
@@ -124,11 +119,11 @@ def get_number_of_sides(area: Area) -> int:
         ([(1, 1)], [(0, 0), (1, 0), (0, 1)]),
         ([(0, 1)], [(0, 0), (1, 0), (1, 1)]),
         ([(1, 0)], [(0, 0), (0, 1), (1, 1)]),
-        ([(0, 0)], [(1, 0), (0, 1), (1, 1)])
+        ([(0, 0)], [(1, 0), (0, 1), (1, 1)]),
     ]
     double_patterns = [
         ([(0, 0), (1, 1)], [(1, 0), (0, 1)]),
-        ([(1, 0), (0, 1)], [(0, 0), (1, 1)])
+        ([(1, 0), (0, 1)], [(0, 0), (1, 1)]),
     ]
 
     corners = 0
@@ -136,10 +131,14 @@ def get_number_of_sides(area: Area) -> int:
     for x in range(len(adapted_area) - 1):
         for y in range(len(adapted_area[x]) - 1):
             for pattern_out, pattern_in in corner_patterns:
-                if all(adapted_area[x + dx][y + dy] == 0 for dx, dy in pattern_out) and all(adapted_area[x + dx][y + dy] == 1 for dx, dy in pattern_in):
+                if all(
+                    adapted_area[x + dx][y + dy] == 0 for dx, dy in pattern_out
+                ) and all(adapted_area[x + dx][y + dy] == 1 for dx, dy in pattern_in):
                     corners += 1
             for pattern_out, pattern_in in double_patterns:
-                if all(adapted_area[x + dx][y + dy] == 0 for dx, dy in pattern_out) and all(adapted_area[x + dx][y + dy] == 1 for dx, dy in pattern_in):
+                if all(
+                    adapted_area[x + dx][y + dy] == 0 for dx, dy in pattern_out
+                ) and all(adapted_area[x + dx][y + dy] == 1 for dx, dy in pattern_in):
                     corners += 2
 
     return corners
@@ -163,17 +162,16 @@ def trim(area: Area) -> Area:
                 min_y = min(min_y, y)
                 max_y = max(max_y, y)
 
-    return [x[min_y:max_y+1] for x in area[min_x:max_x + 1]]
+    return [x[min_y : max_y + 1] for x in area[min_x : max_x + 1]]
 
 
 def add_border(area: Area) -> Area:
 
-    new_area = [[0 for _ in range(len(area[0]) + 2)]
-                for _ in range(len(area) + 2)]
+    new_area = [[0 for _ in range(len(area[0]) + 2)] for _ in range(len(area) + 2)]
 
     for x in range(len(area)):
         for y in range(len(area[x])):
-            new_area[x+1][y+1] = area[x][y]
+            new_area[x + 1][y + 1] = area[x][y]
 
     return new_area
 
@@ -228,10 +226,8 @@ def runTests(test_sol_1, test_sol_2, path):
     test_res_1 += list(map(part1, map(lib.getDataLines, paths)))
     test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
 
-    success_1 = [(test_sol_1[i] == test_res_1[i])
-                 for i in range(len(test_sol_1))]
-    success_2 = [(test_sol_2[i] == test_res_2[i])
-                 for i in range(len(test_sol_2))]
+    success_1 = [(test_sol_1[i] == test_res_1[i]) for i in range(len(test_sol_1))]
+    success_2 = [(test_sol_2[i] == test_res_2[i]) for i in range(len(test_sol_2))]
 
     for i in range(len(test_sol_1)):
         if success_1[i]:

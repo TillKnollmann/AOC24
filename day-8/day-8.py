@@ -1,3 +1,5 @@
+from aocd import submit
+from aocd import get_data
 from datetime import date
 import numpy as np
 import time
@@ -7,11 +9,10 @@ from importlib.machinery import SourceFileLoader
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
-from aocd import get_data
-from aocd import submit
 
 day = 8
 path = ""
+
 
 class Point():
 
@@ -29,6 +30,7 @@ class Point():
 
     def __repr__(self):
         return f"Point({self.x}, {self.y})"
+
 
 class Instance():
 
@@ -52,10 +54,11 @@ def parseInput(input: list[str]) -> dict[str, Instance]:
                 antennas = []
                 if char in result:
                     antennas = result[char].antennas
-                antennas.append(Point(x,y))
+                antennas.append(Point(x, y))
                 result[char] = Instance(antennas, size_x, size_y)
 
     return result
+
 
 def get_all_antinodes(instance: Instance, is_part_2: bool) -> list[Point]:
 
@@ -71,6 +74,7 @@ def get_all_antinodes(instance: Instance, is_part_2: bool) -> list[Point]:
 
     return antinodes
 
+
 def get_antinodes(antenna_a: Point, antenna_b: Point, instance: Instance) -> list[Point]:
 
     a_to_b = Point(antenna_b.x - antenna_a.x, antenna_b.y - antenna_a.y)
@@ -80,10 +84,12 @@ def get_antinodes(antenna_a: Point, antenna_b: Point, instance: Instance) -> lis
     ]
 
     if float(antenna_b.x) - (float(a_to_b.x) * (float(2)/float(3))) % 1 == 0 and float(antenna_b.y) - (float(a_to_b.y) * (float(2)/float(3))) % 1 == 0:
-        candidates.append(Point(float(antenna_b.x) - (float(a_to_b.x) * (float(2)/float(3))), float(antenna_b.y) - (float(a_to_b.y) * (float(2)/float(3)))))
+        candidates.append(Point(float(antenna_b.x) - (float(a_to_b.x) * (float(2)/float(3))),
+                          float(antenna_b.y) - (float(a_to_b.y) * (float(2)/float(3)))))
 
     if float(antenna_b.x) - (float(a_to_b.x) * (float(1)/float(3))) % 1 == 0 and float(antenna_b.y) - (float(a_to_b.y) * (float(1)/float(3))) % 1 == 0:
-        candidates.append(Point(float(antenna_b.x) - (float(a_to_b.x) * (float(1)/float(3))), float(antenna_b.y) - (float(a_to_b.y) * (float(1)/float(3)))))
+        candidates.append(Point(float(antenna_b.x) - (float(a_to_b.x) * (float(1)/float(3))),
+                          float(antenna_b.y) - (float(a_to_b.y) * (float(1)/float(3)))))
 
     valid_candidates = []
     for candidate in candidates:
@@ -91,6 +97,7 @@ def get_antinodes(antenna_a: Point, antenna_b: Point, instance: Instance) -> lis
             valid_candidates.append(candidate)
 
     return valid_candidates
+
 
 def get_additional_antinodes(antenna_a: Point, antenna_b: Point, instance: Instance) -> list[Point]:
 
@@ -100,18 +107,22 @@ def get_additional_antinodes(antenna_a: Point, antenna_b: Point, instance: Insta
     current_node = Point(antenna_a.x, antenna_a.y)
     while is_inside(current_node, instance.size_x, instance.size_y):
         antinodes.append(current_node)
-        current_node = Point(current_node.x - a_to_b.x, current_node.y - a_to_b.y)
+        current_node = Point(current_node.x - a_to_b.x,
+                             current_node.y - a_to_b.y)
 
     current_node = Point(antenna_b.x, antenna_b.y)
     while is_inside(current_node, instance.size_x, instance.size_y):
         antinodes.append(current_node)
-        current_node = Point(current_node.x + a_to_b.x, current_node.y + a_to_b.y)
+        current_node = Point(current_node.x + a_to_b.x,
+                             current_node.y + a_to_b.y)
 
     return antinodes
+
 
 def is_inside(point: Point, size_x: int, size_y: int) -> bool:
 
     return point.x >= 0 and point.x < size_x and point.y >= 0 and point.y < size_y
+
 
 def print_all(instances: dict[str, Instance], antinodes: set[Point]) -> None:
 
@@ -176,8 +187,10 @@ def runTests(test_sol_1, test_sol_2, path):
     test_res_1 += list(map(part1, map(lib.getDataLines, paths)))
     test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
 
-    success_1 = [(test_sol_1[i] == test_res_1[i]) for i in range(len(test_sol_1))]
-    success_2 = [(test_sol_2[i] == test_res_2[i]) for i in range(len(test_sol_2))]
+    success_1 = [(test_sol_1[i] == test_res_1[i])
+                 for i in range(len(test_sol_1))]
+    success_2 = [(test_sol_2[i] == test_res_2[i])
+                 for i in range(len(test_sol_2))]
 
     for i in range(len(test_sol_1)):
         if success_1[i]:
@@ -214,8 +227,8 @@ def main():
     global path
     path = "day-" + str(day) + "/"
 
-    test_sol_1 = [ "14" ]
-    test_sol_2 = [ "34" ]
+    test_sol_1 = ["14"]
+    test_sol_2 = ["34"]
 
     test = True
 
@@ -247,4 +260,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

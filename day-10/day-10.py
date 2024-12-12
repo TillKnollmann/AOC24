@@ -1,3 +1,5 @@
+from aocd import submit
+from aocd import get_data
 from datetime import date
 import numpy as np
 import time
@@ -10,11 +12,10 @@ from importlib.machinery import SourceFileLoader
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
-from aocd import get_data
-from aocd import submit
 
 day = 10
 path = ""
+
 
 class Game:
 
@@ -22,6 +23,7 @@ class Game:
         self.map = map
         self.size_x = size_x
         self.size_y = size_y
+
 
 def parseInput(input: list[str]) -> Game:
 
@@ -35,10 +37,11 @@ def parseInput(input: list[str]) -> Game:
 
     return Game(map, size_x, size_y)
 
-def get_reachable_summits(game: Game, x: int, y: int, reachable_summits: list[list[set[tuple[int,int]]]]) -> set[tuple[int,int]]:
+
+def get_reachable_summits(game: Game, x: int, y: int, reachable_summits: list[list[set[tuple[int, int]]]]) -> set[tuple[int, int]]:
 
     if game.map[x][y] == 9:
-        return {(x,y)}
+        return {(x, y)}
 
     neighbors = [
         (x-1, y),
@@ -57,7 +60,8 @@ def get_reachable_summits(game: Game, x: int, y: int, reachable_summits: list[li
 
     return union
 
-def get_number_of_trails(game: Game, x: int, y: int, reachable_trails: list[list[set[tuple[int,int]]]]) -> set[tuple[int,int]]:
+
+def get_number_of_trails(game: Game, x: int, y: int, reachable_trails: list[list[set[tuple[int, int]]]]) -> set[tuple[int, int]]:
 
     if game.map[x][y] == 9:
         return 1
@@ -78,6 +82,7 @@ def get_number_of_trails(game: Game, x: int, y: int, reachable_trails: list[list
 
     return sum
 
+
 def is_inside(game: Game, x: int, y: int) -> bool:
 
     return x >= 0 and x < game.size_x and y >= 0 and y < game.size_y
@@ -90,13 +95,15 @@ def part1(data, measure=False):
 
     game = parseInput(data)
 
-    reachable_summits = [[ None for y in range(game.size_y) ] for x in range(game.size_x)]
+    reachable_summits = [[None for y in range(
+        game.size_y)] for x in range(game.size_x)]
 
     for height in reversed(range(10)):
         for x in range(game.size_x):
             for y in range(game.size_y):
                 if game.map[x][y] == height:
-                    reachable_summits[x][y] = get_reachable_summits(game, x, y, reachable_summits)
+                    reachable_summits[x][y] = get_reachable_summits(
+                        game, x, y, reachable_summits)
 
     for x in range(game.size_x):
         for y in range(game.size_y):
@@ -116,13 +123,15 @@ def part2(data, measure=False):
 
     game = parseInput(data)
 
-    reachable_trails = [[ None for y in range(game.size_y) ] for x in range(game.size_x)]
+    reachable_trails = [[None for y in range(
+        game.size_y)] for x in range(game.size_x)]
 
     for height in reversed(range(10)):
         for x in range(game.size_x):
             for y in range(game.size_y):
                 if game.map[x][y] == height:
-                    reachable_trails[x][y] = get_number_of_trails(game, x, y, reachable_trails)
+                    reachable_trails[x][y] = get_number_of_trails(
+                        game, x, y, reachable_trails)
 
     for x in range(game.size_x):
         for y in range(game.size_y):
@@ -147,8 +156,10 @@ def runTests(test_sol_1, test_sol_2, path):
     test_res_1 += list(map(part1, map(lib.getDataLines, paths)))
     test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
 
-    success_1 = [(test_sol_1[i] == test_res_1[i]) for i in range(len(test_sol_1))]
-    success_2 = [(test_sol_2[i] == test_res_2[i]) for i in range(len(test_sol_2))]
+    success_1 = [(test_sol_1[i] == test_res_1[i])
+                 for i in range(len(test_sol_1))]
+    success_2 = [(test_sol_2[i] == test_res_2[i])
+                 for i in range(len(test_sol_2))]
 
     for i in range(len(test_sol_1)):
         if success_1[i]:
@@ -185,8 +196,8 @@ def main():
     global path
     path = "day-" + str(day) + "/"
 
-    test_sol_1 = [ "36" ]
-    test_sol_2 = [ "81" ]
+    test_sol_1 = ["36"]
+    test_sol_2 = ["81"]
 
     test = True
 
@@ -218,4 +229,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

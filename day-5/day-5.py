@@ -1,3 +1,8 @@
+import copy
+import math
+import re
+from aocd import submit
+from aocd import get_data
 from datetime import date
 import numpy as np
 import time
@@ -7,17 +12,12 @@ from importlib.machinery import SourceFileLoader
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
-from aocd import get_data
-from aocd import submit
-
-import re
-import math
-import copy
 
 day = 5
 path = ""
 
-def parseInput(input) -> tuple[set[tuple[int,int]], list[list[int]]]:
+
+def parseInput(input) -> tuple[set[tuple[int, int]], list[list[int]]]:
 
     complete_input = "\n".join(input)
     rules_input = complete_input.split("\n\n")[0]
@@ -30,19 +30,21 @@ def parseInput(input) -> tuple[set[tuple[int,int]], list[list[int]]]:
         numbers = number_pattern.findall(rule)
         smaller_to_greater.add((int(numbers[0]), int(numbers[1])))
 
-    orderings = [[int(num) for num in number_pattern.findall(ordering_line)] for ordering_line in orderings_input.split("\n") ]
+    orderings = [[int(num) for num in number_pattern.findall(ordering_line)]
+                 for ordering_line in orderings_input.split("\n")]
 
     return smaller_to_greater, orderings
 
 
-def is_valid(ordering: list[int], rules: set[tuple[int,int]]) -> bool:
+def is_valid(ordering: list[int], rules: set[tuple[int, int]]) -> bool:
     for i in range(len(ordering)-1):
-        for j in range(i+1,len(ordering)):
+        for j in range(i+1, len(ordering)):
             if (ordering[j], ordering[i]) in rules:
                 return False
     return True
 
-def fix(ordering: list[int], rules: set[tuple[int,int]]) -> list[int]:
+
+def fix(ordering: list[int], rules: set[tuple[int, int]]) -> list[int]:
 
     new_ordering = copy.deepcopy(ordering)
 
@@ -50,7 +52,7 @@ def fix(ordering: list[int], rules: set[tuple[int,int]]) -> list[int]:
     while fix_applied:
         fix_applied = False
         for i in range(len(new_ordering)-1):
-            for j in range(i+1,len(new_ordering)):
+            for j in range(i+1, len(new_ordering)):
                 if (new_ordering[j], new_ordering[i]) in rules:
                     temp = new_ordering[i]
                     new_ordering[i] = new_ordering[j]
@@ -59,11 +61,13 @@ def fix(ordering: list[int], rules: set[tuple[int,int]]) -> list[int]:
 
     return new_ordering
 
+
 def get_middle(ordering: list[int]):
     if len(ordering) % 2 == 0:
         return ordering[len(ordering)/2]
     else:
         return ordering[math.floor(len(ordering)/2)]
+
 
 def part1(data, measure=False):
     startTime = time.time()
@@ -74,7 +78,6 @@ def part1(data, measure=False):
     for ordering in orderings:
         if is_valid(ordering, smaller_greater):
             result_1 += get_middle(ordering)
-
 
     executionTime = round(time.time() - startTime, 2)
     if measure:
@@ -110,8 +113,10 @@ def runTests(test_sol_1, test_sol_2, path):
     test_res_1 += list(map(part1, map(lib.getDataLines, paths)))
     test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
 
-    success_1 = [(test_sol_1[i] == test_res_1[i]) for i in range(len(test_sol_1))]
-    success_2 = [(test_sol_2[i] == test_res_2[i]) for i in range(len(test_sol_2))]
+    success_1 = [(test_sol_1[i] == test_res_1[i])
+                 for i in range(len(test_sol_1))]
+    success_2 = [(test_sol_2[i] == test_res_2[i])
+                 for i in range(len(test_sol_2))]
 
     for i in range(len(test_sol_1)):
         if success_1[i]:
@@ -148,8 +153,8 @@ def main():
     global path
     path = "day-" + str(day) + "/"
 
-    test_sol_1 = [ "143" ]
-    test_sol_2 = [ "123" ]
+    test_sol_1 = ["143"]
+    test_sol_2 = ["123"]
 
     test = True
 
@@ -181,4 +186,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

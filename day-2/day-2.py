@@ -1,3 +1,6 @@
+import re
+from aocd import submit
+from aocd import get_data
 from datetime import date
 import numpy as np
 import time
@@ -7,10 +10,6 @@ from importlib.machinery import SourceFileLoader
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
-from aocd import get_data
-from aocd import submit
-
-import re
 
 day = 2
 path = ""
@@ -26,9 +25,11 @@ def parseInput(input):
 
     return result
 
+
 def is_level_safe_part_1(level: list[int]) -> bool:
     (violations, violations_reversed) = get_all_violations(level)
     return len(violations) == 0 or len(violations_reversed) == 0
+
 
 def is_level_safe_part_2(level: list[int]) -> bool:
 
@@ -47,6 +48,7 @@ def is_level_safe_part_2(level: list[int]) -> bool:
             if can_level_be_fixed(reversed, violations_reversed):
                 return True
         return False
+
 
 def can_level_be_fixed(level: list[int], violations: list[int]):
     if len(violations) > 2:
@@ -67,13 +69,15 @@ def can_level_be_fixed(level: list[int], violations: list[int]):
     else:
         return False
 
-def cutout(level: list[int], index:int) -> list[int]:
+
+def cutout(level: list[int], index: int) -> list[int]:
     if index == 0:
         return level[1:]
     elif index == len(level)-1:
         return level[:len(level)-1]
     else:
         return level[:index] + level[index+1:]
+
 
 def get_all_violations(level: list[int]) -> list[int]:
 
@@ -84,6 +88,7 @@ def get_all_violations(level: list[int]) -> list[int]:
 
     return (violations, violations_reversed)
 
+
 def get_violations(level: list[int]) -> list[int]:
 
     # Assumption: level is ascending
@@ -93,6 +98,7 @@ def get_violations(level: list[int]) -> list[int]:
             violations.append(i)
 
     return violations
+
 
 def is_pair_safe(first: int, second: int) -> bool:
     if first >= second or second - first > 3:
@@ -109,7 +115,6 @@ def part1(data, measure=False):
     for level in input:
         if is_level_safe_part_1(level):
             result_1 += 1
-
 
     executionTime = round(time.time() - startTime, 2)
     if measure:
@@ -144,8 +149,10 @@ def runTests(test_sol_1, test_sol_2, path):
     test_res_1 += list(map(part1, map(lib.getDataLines, paths)))
     test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
 
-    success_1 = [(test_sol_1[i] == test_res_1[i]) for i in range(len(test_sol_1))]
-    success_2 = [(test_sol_2[i] == test_res_2[i]) for i in range(len(test_sol_2))]
+    success_1 = [(test_sol_1[i] == test_res_1[i])
+                 for i in range(len(test_sol_1))]
+    success_2 = [(test_sol_2[i] == test_res_2[i])
+                 for i in range(len(test_sol_2))]
 
     for i in range(len(test_sol_1)):
         if success_1[i]:
@@ -182,8 +189,8 @@ def main():
     global path
     path = "day-" + str(day) + "/"
 
-    test_sol_1 = [ "2" ]
-    test_sol_2 = [ "4" ]
+    test_sol_1 = ["2"]
+    test_sol_2 = ["4"]
 
     test = True
 
@@ -215,4 +222,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

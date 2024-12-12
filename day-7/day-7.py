@@ -1,3 +1,7 @@
+import re
+from enum import Enum
+from aocd import submit
+from aocd import get_data
 from datetime import date
 import numpy as np
 import time
@@ -7,24 +11,22 @@ from importlib.machinery import SourceFileLoader
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
-from aocd import get_data
-from aocd import submit
-
-from enum import Enum
-import re
 
 day = 7
 path = ""
+
 
 class Operator(Enum):
     ADD = 1
     MULT = 2
     CONCAT = 3
 
+
 class Instance:
     def __init__(self, result: int, values: list[int]):
         self.result = result
         self.values = values
+
 
 def parseInput(input: list[str]) -> list[Instance]:
 
@@ -41,9 +43,11 @@ def parseInput(input: list[str]) -> list[Instance]:
 
     return output
 
+
 def can_instance_be_true_part_1(instance: Instance) -> bool:
 
     return is_instance_true_part_1(instance, instance.values[0], [])
+
 
 def is_instance_true_part_1(instance: Instance, current_value: int, current_operators: list[Operator]) -> bool:
 
@@ -52,9 +56,11 @@ def is_instance_true_part_1(instance: Instance, current_value: int, current_oper
 
     return is_instance_true_part_1(instance, evaluate(current_value, instance.values[len(current_operators) + 1], Operator.ADD), current_operators + [Operator.ADD]) or is_instance_true_part_1(instance, evaluate(current_value, instance.values[len(current_operators) + 1], Operator.MULT), current_operators + [Operator.MULT])
 
+
 def can_instance_be_true_part_2(instance: Instance) -> bool:
 
     return is_instance_true_part_2(instance, instance.values[0], [])
+
 
 def is_instance_true_part_2(instance: Instance, current_value: int, current_operators: list[Operator]) -> bool:
 
@@ -66,6 +72,7 @@ def is_instance_true_part_2(instance: Instance, current_value: int, current_oper
 
     return is_instance_true_part_2(instance, evaluate(current_value, instance.values[len(current_operators) + 1], Operator.ADD), current_operators + [Operator.ADD]) or is_instance_true_part_2(instance, evaluate(current_value, instance.values[len(current_operators) + 1], Operator.MULT), current_operators + [Operator.MULT]) or is_instance_true_part_2(instance, evaluate(current_value, instance.values[len(current_operators) + 1], Operator.CONCAT), current_operators + [Operator.CONCAT])
 
+
 def evaluate(value_a: int, value_b: int, operator: Operator) -> int:
 
     match operator:
@@ -76,6 +83,7 @@ def evaluate(value_a: int, value_b: int, operator: Operator) -> int:
         case Operator.CONCAT:
             return int(str(value_a) + str(value_b))
 
+
 def part1(data, measure=False):
     startTime = time.time()
     result_1 = 0
@@ -85,7 +93,6 @@ def part1(data, measure=False):
     for instance in instances:
         if can_instance_be_true_part_1(instance):
             result_1 += instance.result
-
 
     executionTime = round(time.time() - startTime, 2)
     if measure:
@@ -120,8 +127,10 @@ def runTests(test_sol_1, test_sol_2, path):
     test_res_1 += list(map(part1, map(lib.getDataLines, paths)))
     test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
 
-    success_1 = [(test_sol_1[i] == test_res_1[i]) for i in range(len(test_sol_1))]
-    success_2 = [(test_sol_2[i] == test_res_2[i]) for i in range(len(test_sol_2))]
+    success_1 = [(test_sol_1[i] == test_res_1[i])
+                 for i in range(len(test_sol_1))]
+    success_2 = [(test_sol_2[i] == test_res_2[i])
+                 for i in range(len(test_sol_2))]
 
     for i in range(len(test_sol_1)):
         if success_1[i]:
@@ -158,8 +167,8 @@ def main():
     global path
     path = "day-" + str(day) + "/"
 
-    test_sol_1 = [ "3749" ]
-    test_sol_2 = [ "11387" ]
+    test_sol_1 = ["3749"]
+    test_sol_2 = ["11387"]
 
     test = True
 
@@ -191,4 +200,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -1,3 +1,6 @@
+import re
+from aocd import submit
+from aocd import get_data
 from datetime import date
 import numpy as np
 import time
@@ -7,10 +10,6 @@ from importlib.machinery import SourceFileLoader
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
-from aocd import get_data
-from aocd import submit
-
-import re
 
 day = 4
 path = ""
@@ -35,16 +34,16 @@ def parse_input_part_1(input: list[str]):
         column = 0
         for row in range(start_row, len(input)):
             top_left_to_bottom_right.append(input[row][column])
-            column+=1
+            column += 1
         result.append("".join(top_left_to_bottom_right))
 
     # top left to bottom right row 0
-    for start_column in range(1,len(input[0])):
+    for start_column in range(1, len(input[0])):
         top_left_to_bottom_right = []
         row = 0
         for column in range(start_column, len(input[0])):
             top_left_to_bottom_right.append(input[row][column])
-            row+=1
+            row += 1
         result.append("".join(top_left_to_bottom_right))
 
     # top right to bottom left column len(input[0])-1
@@ -53,26 +52,27 @@ def parse_input_part_1(input: list[str]):
         column = len(input[0])-1
         for row in range(start_row, len(input)):
             top_right_to_bottom_left.append(input[row][column])
-            column-=1
+            column -= 1
         result.append("".join(top_right_to_bottom_left))
 
      # top right to bottom left row 0
-    for start_column in range(1,len(input[0])):
+    for start_column in range(1, len(input[0])):
         top_right_to_bottom_left = []
         row = 0
         for column in reversed(range(0, start_column)):
             top_right_to_bottom_left.append(input[row][column])
-            row+=1
+            row += 1
         result.append("".join(top_right_to_bottom_left))
-
 
     return result
 
-def get_xmas_samx_hits(line:str) -> int:
+
+def get_xmas_samx_hits(line: str) -> int:
 
     xmas_hits = len(xmas_pattern.findall(line))
     samx_hits = len(samx_pattern.findall(line))
     return xmas_hits + samx_hits
+
 
 def parse_input_part_2(input):
 
@@ -84,19 +84,19 @@ def parse_input_part_2(input):
 
     return result
 
-def find_x_mas(puzzle:list[list[str]]) -> int:
 
-    num_of_x_mas:int = 0
+def find_x_mas(puzzle: list[list[str]]) -> int:
+
+    num_of_x_mas: int = 0
 
     # find all 'a's and check surroundings
-    for row in range(1,len(puzzle)-1):
-        for column in range(1,len(puzzle[row])-1):
+    for row in range(1, len(puzzle)-1):
+        for column in range(1, len(puzzle[row])-1):
             if puzzle[row][column] == "A":
                 if ((puzzle[row-1][column-1] == "M" and puzzle[row+1][column+1] == "S") or (puzzle[row-1][column-1] == "S" and puzzle[row+1][column+1] == "M")) and ((puzzle[row-1][column+1] == "M" and puzzle[row+1][column-1] == "S") or (puzzle[row-1][column+1] == "S" and puzzle[row+1][column-1] == "M")):
                     num_of_x_mas += 1
 
     return num_of_x_mas
-
 
 
 def part1(data, measure=False):
@@ -139,8 +139,10 @@ def runTests(test_sol_1, test_sol_2, path):
     test_res_1 += list(map(part1, map(lib.getDataLines, paths)))
     test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
 
-    success_1 = [(test_sol_1[i] == test_res_1[i]) for i in range(len(test_sol_1))]
-    success_2 = [(test_sol_2[i] == test_res_2[i]) for i in range(len(test_sol_2))]
+    success_1 = [(test_sol_1[i] == test_res_1[i])
+                 for i in range(len(test_sol_1))]
+    success_2 = [(test_sol_2[i] == test_res_2[i])
+                 for i in range(len(test_sol_2))]
 
     for i in range(len(test_sol_1)):
         if success_1[i]:
@@ -177,8 +179,8 @@ def main():
     global path
     path = "day-" + str(day) + "/"
 
-    test_sol_1 = [ "18" ]
-    test_sol_2 = [ "9" ]
+    test_sol_1 = ["18"]
+    test_sol_2 = ["9"]
 
     test = True
 
@@ -210,4 +212,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

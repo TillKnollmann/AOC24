@@ -1,3 +1,5 @@
+from aocd import submit
+from aocd import get_data
 from datetime import date
 import numpy as np
 import time
@@ -8,8 +10,6 @@ from importlib.machinery import SourceFileLoader
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
-from aocd import get_data
-from aocd import submit
 
 day = 1
 path = ""
@@ -32,8 +32,10 @@ def parseInput(input):
 
     return result
 
+
 def absolute_value(x):
     return x if x >= 0 else -x
+
 
 def part1(data, measure=False):
     startTime = time.time()
@@ -59,7 +61,8 @@ def part2(data, measure=False):
 
     (left_list, right_list) = parseInput(data)
 
-    right_list_frequencies = dict((number, right_list.count(number)) for number in set(left_list))
+    right_list_frequencies = dict(
+        (number, right_list.count(number)) for number in set(left_list))
 
     for left_num in left_list:
         result_2 += left_num * right_list_frequencies[left_num]
@@ -81,7 +84,8 @@ def runTests(test_sol_1, test_sol_2, path):
     test_res_1 += list(map(part1, map(lib.getDataLines, paths)))
     test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
 
-    success_1 = [(test_sol_1[i] == test_res_1[i]) for i in range(len(test_sol_1))]
+    success_1 = [(test_sol_1[i] == test_res_1[i])
+                 for i in range(len(test_sol_1))]
     success_2 = [
         "Part 2 Test " + str(i + 1) + " " + str(test_sol_2[i] == test_res_2[i])
         for i in range(len(test_sol_2))
@@ -122,8 +126,8 @@ def main():
     global path
     path = "Day " + str(day) + "/"
 
-    test_sol_1 = [ "11" ]
-    test_sol_2 = [ "31" ]
+    test_sol_1 = ["11"]
+    test_sol_2 = ["31"]
 
     test = True
 
@@ -155,4 +159,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

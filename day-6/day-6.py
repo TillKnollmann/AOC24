@@ -1,3 +1,9 @@
+from tqdm import tqdm
+import copy
+from enum import Enum
+import collections
+from aocd import submit
+from aocd import get_data
 from datetime import date
 import numpy as np
 import time
@@ -7,14 +13,6 @@ from importlib.machinery import SourceFileLoader
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
-from aocd import get_data
-from aocd import submit
-
-import collections
-
-from enum import Enum
-import copy
-from tqdm import tqdm
 
 class Direction(Enum):
     NORTH = 1
@@ -22,17 +20,20 @@ class Direction(Enum):
     SOUTH = 3
     WEST = 4
 
+
 class Agent:
     def __init__(self, x: int, y: int, direction: Direction):
         self.x = x
         self.y = y
         self.direction = direction
 
+
 class Field:
     def __init__(self, obstacles: dict[dict[bool]], size_x: int, size_y: int):
         self.obstacles = obstacles
         self.size_x = size_x
         self.size_y = size_y
+
 
 day = 6
 path = ""
@@ -43,7 +44,6 @@ def parseInput(input: list[str]) -> tuple[Agent, Field]:
     obstacles = collections.defaultdict(dict)
     start_position = None
 
-
     for y in range(len(input)):
         for x in range(len(input[y])):
             if input[y][x] == "#":
@@ -51,10 +51,10 @@ def parseInput(input: list[str]) -> tuple[Agent, Field]:
             elif input[y][x] == '^':
                 start_position = Agent(x, y, Direction.NORTH)
 
-
     return start_position, Field(obstacles, len(input[0]), len(input))
 
-def get_visited_positions(agent: Agent, field: Field) -> tuple[list[Agent],set[tuple[int, int]]]:
+
+def get_visited_positions(agent: Agent, field: Field) -> tuple[list[Agent], set[tuple[int, int]]]:
 
     visited_positions = set()
     path = []
@@ -63,12 +63,14 @@ def get_visited_positions(agent: Agent, field: Field) -> tuple[list[Agent],set[t
     while is_agent_in_bounds(current_agent, field):
 
         visited_positions.add((current_agent.x, current_agent.y))
-        path.append(Agent(current_agent.x, current_agent.y, current_agent.direction))
+        path.append(Agent(current_agent.x, current_agent.y,
+                    current_agent.direction))
         new_agent = get_next_position(current_agent, field)
         # print(f'({current_agent.x},{current_agent.y}) -> ({new_agent.x},{new_agent.y})')
         current_agent = new_agent
 
     return path, visited_positions
+
 
 def has_loop(agent: Agent, field: Field) -> bool:
 
@@ -77,16 +79,19 @@ def has_loop(agent: Agent, field: Field) -> bool:
 
     while is_agent_in_bounds(current_agent, field) and not (current_agent.x, current_agent.y, current_agent.direction) in visited_positions:
 
-        visited_positions.add((current_agent.x, current_agent.y, current_agent.direction))
+        visited_positions.add(
+            (current_agent.x, current_agent.y, current_agent.direction))
         new_agent = get_next_position(current_agent, field)
         # print(f'({current_agent.x},{current_agent.y}) -> ({new_agent.x},{new_agent.y})')
         current_agent = new_agent
 
     return (current_agent.x, current_agent.y, current_agent.direction) in visited_positions
 
+
 def is_agent_in_bounds(agent: Agent, field: Field) -> bool:
 
     return agent.x >= 0 and agent.y >= 0 and agent.x < field.size_x and agent.y < field.size_y
+
 
 def get_next_position(agent: Agent, field: Field) -> Agent:
 
@@ -169,8 +174,10 @@ def runTests(test_sol_1, test_sol_2, path):
     test_res_1 += list(map(part1, map(lib.getDataLines, paths)))
     test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
 
-    success_1 = [(test_sol_1[i] == test_res_1[i]) for i in range(len(test_sol_1))]
-    success_2 = [(test_sol_2[i] == test_res_2[i]) for i in range(len(test_sol_2))]
+    success_1 = [(test_sol_1[i] == test_res_1[i])
+                 for i in range(len(test_sol_1))]
+    success_2 = [(test_sol_2[i] == test_res_2[i])
+                 for i in range(len(test_sol_2))]
 
     for i in range(len(test_sol_1)):
         if success_1[i]:
@@ -207,8 +214,8 @@ def main():
     global path
     path = "day-" + str(day) + "/"
 
-    test_sol_1 = [ "41" ]
-    test_sol_2 = [ "6" ]
+    test_sol_1 = ["41"]
+    test_sol_2 = ["6"]
 
     test = True
 
@@ -240,4 +247,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

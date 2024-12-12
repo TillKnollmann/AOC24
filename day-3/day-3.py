@@ -1,3 +1,6 @@
+import re
+from aocd import submit
+from aocd import get_data
 from datetime import date
 import numpy as np
 import time
@@ -7,10 +10,6 @@ from importlib.machinery import SourceFileLoader
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
-from aocd import get_data
-from aocd import submit
-
-import re
 
 day = 3
 path = ""
@@ -22,6 +21,7 @@ def parseInput(input):
     result = "".join(input)
 
     return result
+
 
 def get_enabled_multiplications(memory: str) -> list[str]:
 
@@ -42,11 +42,13 @@ def get_enabled_multiplications(memory: str) -> list[str]:
 
     return enabled_multiplications
 
+
 def get_multiplications(memory: str) -> list[str]:
 
     pattern = re.compile(r'mul\([0-9]{1,3},[0-9]{1,3}\)')
 
     return pattern.findall(memory)
+
 
 def interpret_multiplication(mult: str) -> int:
 
@@ -54,6 +56,7 @@ def interpret_multiplication(mult: str) -> int:
 
     numbers = [int(num) for num in pattern.findall(mult)]
     return numbers[0] * numbers[1]
+
 
 def part1(data, measure=False):
     startTime = time.time()
@@ -98,8 +101,10 @@ def runTests(test_sol_1, test_sol_2, path):
     test_res_1 += list(map(part1, map(lib.getDataLines, paths)))
     test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
 
-    success_1 = [(test_sol_1[i] == test_res_1[i]) for i in range(len(test_sol_1))]
-    success_2 = [(test_sol_2[i] == test_res_2[i]) for i in range(len(test_sol_2))]
+    success_1 = [(test_sol_1[i] == test_res_1[i])
+                 for i in range(len(test_sol_1))]
+    success_2 = [(test_sol_2[i] == test_res_2[i])
+                 for i in range(len(test_sol_2))]
 
     for i in range(len(test_sol_1)):
         if success_1[i]:
@@ -136,8 +141,8 @@ def main():
     global path
     path = "day-" + str(day) + "/"
 
-    test_sol_1 = [ "161", "161" ]
-    test_sol_2 = [ "161", "48" ]
+    test_sol_1 = ["161", "161"]
+    test_sol_2 = ["161", "48"]
 
     test = True
 
@@ -169,4 +174,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
