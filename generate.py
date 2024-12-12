@@ -5,23 +5,6 @@ import argparse
 tab = "    "
 
 
-def getTemplateCode(day):
-    result = "import numpy as np\nimport time\nimport pprint\n\n"
-    result += 'path = "day-' + str(day) + '/input-test.txt"\n\n'
-    result += "def main():\n"
-    result += tab + 'with open(path, "r") as file:\n'
-    result += tab + tab + "startTime = time.time()\n"
-    result += tab + tab + "lines = file.readlines()\n"
-    result += "\n" + tab + tab + "for line in lines:\n"
-    result += tab + tab + tab + "break\n\n"
-    result += tab + tab + 'print(" ")\n'
-    result += tab + tab + "executionTime = round(time.time() - startTime, 2)\n"
-    result += tab + tab + \
-        'print("Execution time in seconds: " + str(executionTime))'
-    result += '\n\nif __name__ == "__main__":\n\tmain()'
-    return result
-
-
 def main():
     parser = argparse.ArgumentParser(
         description="Generator for AOC day solutions")
@@ -30,7 +13,7 @@ def main():
     args = parser.parse_args()
 
     path = os.getcwd()
-    template_path = os.path.join(path, "Template")
+    template_path = os.path.join(path, "template")
     current_path = os.path.join(path, "day-" + str(args.day))
     if not os.path.exists(current_path):
         shutil.copytree(template_path, current_path)
@@ -44,8 +27,6 @@ def main():
         file_data = file_data.replace("DAY", str(args.day))
         with open(current_path + "/" + day_name, "w") as file:
             file.write(file_data)
-        # with open(current_path + "/" + day_name, "w") as file:
-        # file.write(getTemplateCode(i))
 
 
 if __name__ == "__main__":
