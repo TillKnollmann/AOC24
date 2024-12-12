@@ -1,20 +1,21 @@
-from datetime import date
-import numpy as np
+from aocd import submit
+from aocd import get_data
+
 import time
-import pprint
-import math
-import re
-from copy import deepcopy
+
 
 from importlib.machinery import SourceFileLoader
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
-from aocd import get_data
-from aocd import submit
-
 day = DAY
 path = ""
+
+test_sol_1 = ["", ""]  # Todo put in test solutions part 1
+test_sol_2 = ["", ""]  # Todo put in test solutions part 2
+
+sol1 = sub1 = True  # Todo
+sol2 = sub2 = True  # Todo
 
 
 def parseInput(input: list[str]) -> None:
@@ -68,8 +69,10 @@ def runTests(test_sol_1, test_sol_2, path):
     test_res_1 += list(map(part1, map(lib.getDataLines, paths)))
     test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
 
-    success_1 = [(test_sol_1[i] == test_res_1[i]) for i in range(len(test_sol_1))]
-    success_2 = [(test_sol_2[i] == test_res_2[i]) for i in range(len(test_sol_2))]
+    success_1 = [(test_sol_1[i] == test_res_1[i])
+                 for i in range(len(test_sol_1))]
+    success_2 = [(test_sol_2[i] == test_res_2[i])
+                 for i in range(len(test_sol_2))]
 
     for i in range(len(test_sol_1)):
         if success_1[i]:
@@ -84,6 +87,8 @@ def runTests(test_sol_1, test_sol_2, path):
                 + test_res_1[i]
             )
             all_check = False
+
+    print()
 
     for i in range(len(test_sol_2)):
         if success_2[i]:
@@ -106,13 +111,7 @@ def main():
     global path
     path = "day-" + str(day) + "/"
 
-    test_sol_1 = []  # Todo put in test solutions part 1
-    test_sol_2 = []  # Todo put in test solutions part 2
-
     test = True
-
-    sol1 = sub1 = False  # Todo
-    sol2 = sub2 = False  # Todo
 
     if test:
         if not runTests(test_sol_1, test_sol_2, path):
@@ -139,4 +138,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
