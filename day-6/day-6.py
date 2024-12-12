@@ -39,7 +39,7 @@ day = 6
 path = ""
 
 
-def parseInput(input: list[str]) -> tuple[Agent, Field]:
+def parse_input(input: list[str]) -> tuple[Agent, Field]:
 
     obstacles = collections.defaultdict(dict)
     start_position = None
@@ -132,7 +132,7 @@ def part1(data, measure=False):
     startTime = time.time()
     result_1 = None
 
-    agent, field = parseInput(data)
+    agent, field = parse_input(data)
 
     result_1 = len(get_visited_positions(agent, field)[1])
 
@@ -145,7 +145,7 @@ def part1(data, measure=False):
 def part2(data, measure=False):
     startTime = time.time()
 
-    agent, field = parseInput(data)
+    agent, field = parse_input(data)
 
     path, candidate_positions = get_visited_positions(agent, field)
     valid_positions = set()
@@ -169,10 +169,10 @@ def runTests(test_sol_1, test_sol_2, path):
 
     all_check = True
 
-    paths = lib.getTestPaths(path)
+    paths = lib.get_test_paths(path)
 
-    test_res_1 += list(map(part1, map(lib.getDataLines, paths)))
-    test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
+    test_res_1 += list(map(part1, map(lib.get_data_lines, paths)))
+    test_res_2 += list(map(part2, map(lib.get_data_lines, paths)))
 
     success_1 = [(test_sol_1[i] == test_res_1[i])
                  for i in range(len(test_sol_1))]

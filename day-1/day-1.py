@@ -15,7 +15,7 @@ day = 1
 path = ""
 
 
-def parseInput(input):
+def parse_input(input):
     result = None
 
     pattern = re.compile(r'\d+')
@@ -41,7 +41,7 @@ def part1(data, measure=False):
     startTime = time.time()
     result_1 = 0
 
-    (left_list, right_list) = parseInput(data)
+    (left_list, right_list) = parse_input(data)
 
     left_list.sort()
     right_list.sort()
@@ -59,7 +59,7 @@ def part2(data, measure=False):
     startTime = time.time()
     result_2 = 0
 
-    (left_list, right_list) = parseInput(data)
+    (left_list, right_list) = parse_input(data)
 
     right_list_frequencies = dict(
         (number, right_list.count(number)) for number in set(left_list))
@@ -79,10 +79,10 @@ def runTests(test_sol_1, test_sol_2, path):
 
     all_check = True
 
-    paths = lib.getTestPaths(path)
+    paths = lib.get_test_paths(path)
 
-    test_res_1 += list(map(part1, map(lib.getDataLines, paths)))
-    test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
+    test_res_1 += list(map(part1, map(lib.get_data_lines, paths)))
+    test_res_2 += list(map(part2, map(lib.get_data_lines, paths)))
 
     success_1 = [(test_sol_1[i] == test_res_1[i])
                  for i in range(len(test_sol_1))]

@@ -23,7 +23,7 @@ class Area(list[list[int]]):
     pass
 
 
-def parseInput(input: list[str]) -> Area:
+def parse_input(input: list[str]) -> Area:
 
     area = []
 
@@ -185,7 +185,7 @@ def part1(data, measure=False):
     startTime = time.time()
     result_1 = 0
 
-    area = parseInput(data)
+    area = parse_input(data)
 
     for x in range(len(area)):
         for y in range(len(area[x])):
@@ -204,7 +204,7 @@ def part2(data, measure=False):
     startTime = time.time()
     result_2 = 0
 
-    area = parseInput(data)
+    area = parse_input(data)
 
     for x in range(len(area)):
         for y in range(len(area[x])):
@@ -225,10 +225,10 @@ def runTests(test_sol_1, test_sol_2, path):
 
     all_check = True
 
-    paths = lib.getTestPaths(path)
+    paths = lib.get_test_paths(path)
 
-    test_res_1 += list(map(part1, map(lib.getDataLines, paths)))
-    test_res_2 += list(map(part2, map(lib.getDataLines, paths)))
+    test_res_1 += list(map(part1, map(lib.get_data_lines, paths)))
+    test_res_2 += list(map(part2, map(lib.get_data_lines, paths)))
 
     success_1 = [(test_sol_1[i] == test_res_1[i])
                  for i in range(len(test_sol_1))]
