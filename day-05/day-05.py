@@ -150,7 +150,7 @@ def run_tests(test_sol_1, test_sol_2, path):
 
 
 def main():
-    global path
+    global path, sol_1, sol_2, sub_1, sub_2
     path = "day-" + str(day).zfill(2) + "/"
 
     test_sol_1 = ["143"]
@@ -158,12 +158,12 @@ def main():
 
     test = True
 
-    sol1 = sub1 = False
-    sol2 = sub2 = False
+    sol1 = sub_1 = False
+    sol2 = sub_2 = False
 
     if test:
         if not run_tests(test_sol_1, test_sol_2, path):
-            sub1 = sub2 = False
+            sub_1 = sub_2 = False
 
     data_main = get_data(day=day, year=2024).splitlines()
 
@@ -177,10 +177,10 @@ def main():
 
     print("\n")
 
-    if sub1:
+    if sub_1:
         submit(int(result_1), part="a", day=day, year=2024)
 
-    if sub2:
+    if sub_2:
         submit(int(result_2), part="b", day=day, year=2024)
 
 
