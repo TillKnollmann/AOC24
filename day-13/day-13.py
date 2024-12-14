@@ -14,7 +14,7 @@ day = 13
 path = ""
 
 test_sol_1 = ["480"]
-test_sol_2 = ["Unknown"]  # Todo put in test solutions part 2
+test_sol_2 = ["875318608908"]
 
 sol_1 = sub_1 = False
 sol_2 = sub_2 = True
@@ -44,16 +44,33 @@ def parse_input(input: list[str]) -> list[ClawMachine]:
     return machines
 
 
-def scale_price(machine: ClawMachine, additive_term: int) -> ClawMachine:
+def scale_prize(machine: ClawMachine, additive_term: int) -> ClawMachine:
 
     return ClawMachine(machine.shift_a, machine.shift_b, (machine.prize[0] + additive_term, machine.prize[1] + additive_term))
+
+
+def evaluate_machine_part_2(machine: ClawMachine) -> int:
+
+    # a = (b_x * p_y - b_y * p_x) / (a_y * b_x - a_x * b_y)
+    a = (machine.shift_b[0] * machine.prize[1] - machine.shift_b[1] * machine.prize[0])/(
+        machine.shift_a[1] * machine.shift_b[0] - machine.shift_a[0] * machine.shift_b[1])
+    # b = (p_x - a_x * a) / b_x
+    b = (machine.prize[0] - machine.shift_a[0] * a)/(
+        machine.shift_b[0])
+
+    return 3 * int(a) + int(b) if is_valid(int(a), int(b), machine) else 0
+
+
+def is_valid(a: int, b: int, machine: ClawMachine) -> bool:
+
+    return a * machine.shift_a[0] + b * machine.shift_b[0] == machine.prize[0] and a * machine.shift_a[1] + b * machine.shift_b[1] == machine.prize[1]
 
 
 def evaluate_machine(machine: ClawMachine, max_trials: int) -> int:
 
     # A = press a, a_x = shift a in x, a_y = shift a in y
     # B = press b, b_x = shift b in x, b_y = shift b in y
-    # p_x = price x, p_y = price y
+    # p_x = prize x, p_y = prize y
 
     # min 3 * a + b
     # s.t.    a * a_x + b * b_x = p_x
@@ -75,9 +92,6 @@ def evaluate_machine(machine: ClawMachine, max_trials: int) -> int:
         machine.shift_b[1] == machine.prize[1], "y-must-match"
 
     prob.solve(PULP_CBC_CMD(msg=False))
-
-    print(f"Status: {pulp.LpStatus[prob.status]}")
-    print(f"Objective value = {pulp.value(prob.objective)}")
 
     return 0 if "Infeasible" == pulp.LpStatus[prob.status] else int(pulp.value(prob.objective))
 
@@ -111,8 +125,8 @@ def part_2(data, measure=False):
 
     machines = parse_input(data)
     for machine in machines:
-        machine = scale_price(machine, additive_term)
-        result_2 += evaluate_machine(machine, None)
+        machine = scale_prize(machine, additive_term)
+        result_2 += evaluate_machine_part_2(machine)
 
     execution_time = round(time.time() - startTime, 2)
     if measure:
@@ -171,14 +185,14 @@ def run_tests(test_sol_1, test_sol_2, path):
 
 
 def main():
-    global path
+    global path, sol_1, sol_2, sub_1, sub_2
     path = "day-" + str(day).zfill(2) + "/"
 
     test = True
 
     if test:
         if not run_tests(test_sol_1, test_sol_2, path):
-            sub1 = sub2 = False
+            sub_1 = sub_2 = False
 
     data_main = get_data(day=day, year=2024).splitlines()
 
@@ -192,10 +206,10 @@ def main():
 
     print("\n")
 
-    if sub1:
+    if sub_1:
         submit(int(result_1), part="a", day=day, year=2024)
 
-    if sub2:
+    if sub_2:
         submit(int(result_2), part="b", day=day, year=2024)
 
 
