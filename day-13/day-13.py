@@ -17,7 +17,7 @@ test_sol_1 = ["480"]
 test_sol_2 = ["875318608908"]
 
 sol_1 = sub_1 = False
-sol_2 = sub_2 = True
+sol_2 = sub_2 = False
 
 
 class ClawMachine():
