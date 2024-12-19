@@ -1,9 +1,8 @@
+from functools import cache, lru_cache
 from aocd import submit
 from aocd import get_data
 
 import time
-
-from cachetools import cached
 
 from importlib.machinery import SourceFileLoader
 
@@ -16,16 +15,19 @@ test_sol_1 = ["6"]
 test_sol_2 = ["16"]
 
 sol_1 = sub_1 = False
-sol_2 = sub_2 = True
+sol_2 = sub_2 = False
 
 solvable = set()
+manual_cache = dict()
 
 
-def parse_input(input: list[str]) -> tuple[set[str], list[str]]:
+def parse_input(input: list[str]) -> list[str]:
 
     global solvable
 
-    solvable = set()
+    manual_cache.clear()
+
+    solvable.clear()
     lines = []
 
     input_total = "\n".join(input)
@@ -34,28 +36,33 @@ def parse_input(input: list[str]) -> tuple[set[str], list[str]]:
     lines = input_total.split("\n\n")[1].split("\n")
 
     for word in solvable_string.split(", "):
-        solvable.add(word.strip())
+        if len(word.strip()) > 0:
+            solvable.add(word.strip())
 
     return lines
 
 
-@cached(cache={})
-def can_be_solved(current_word: str) -> tuple[bool, int]:
+def num_solutions(current_word: str) -> tuple[bool, int]:
 
-    global solvable
+    global solvable, manual_cache
 
     if len(current_word) == 0:
         return True, 1
+
+    if current_word in manual_cache:
+        return manual_cache[current_word]
 
     total_solutions = 0
     any_solved = False
 
     for word in solvable:
-        if current_word.startswith(word) or current_word == word:
-            solved, solutions = can_be_solved(current_word[len(word):])
+        if current_word.startswith(word):
+            solved, solutions = num_solutions(current_word.removeprefix(word))
+            total_solutions += solutions
             if solved:
-                total_solutions += solutions
                 any_solved = True
+
+    manual_cache[current_word] = any_solved, total_solutions
 
     return any_solved, total_solutions
 
@@ -68,7 +75,7 @@ def part_1(data, measure=False):
     lines = parse_input(data)
 
     for line in lines:
-        solved, _ = can_be_solved(line)
+        solved, _ = num_solutions(line)
         if solved:
             result_1 += 1
 
@@ -86,9 +93,8 @@ def part_2(data, measure=False):
     lines = parse_input(data)
 
     for line in lines:
-        solved, solutions = can_be_solved(line)
-        if solved:
-            result_2 += solutions
+        _, solutions = num_solutions(line)
+        result_2 += solutions
 
     execution_time = round(time.time() - startTime, 2)
     if measure:
