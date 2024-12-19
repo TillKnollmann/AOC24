@@ -6,6 +6,8 @@ import time
 
 from importlib.machinery import SourceFileLoader
 
+from cachetools import cached
+
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
 day = 19
@@ -17,17 +19,16 @@ test_sol_2 = ["16"]
 sol_1 = sub_1 = False
 sol_2 = sub_2 = False
 
-solvable = set()
-manual_cache = dict()
+towels = set()
 
 
 def parse_input(input: list[str]) -> list[str]:
 
-    global solvable
+    global towels
 
-    manual_cache.clear()
+    solve.cache_clear()
 
-    solvable.clear()
+    towels.clear()
     lines = []
 
     input_total = "\n".join(input)
@@ -37,32 +38,28 @@ def parse_input(input: list[str]) -> list[str]:
 
     for word in solvable_string.split(", "):
         if len(word.strip()) > 0:
-            solvable.add(word.strip())
+            towels.add(word.strip())
 
     return lines
 
 
-def num_solutions(current_word: str) -> tuple[bool, int]:
+@cached(cache={})
+def solve(current_word: str) -> tuple[bool, int]:
 
-    global solvable, manual_cache
+    global towels
 
     if len(current_word) == 0:
         return True, 1
 
-    if current_word in manual_cache:
-        return manual_cache[current_word]
-
     total_solutions = 0
     any_solved = False
 
-    for word in solvable:
+    for word in towels:
         if current_word.startswith(word):
-            solved, solutions = num_solutions(current_word.removeprefix(word))
+            solved, solutions = solve(current_word.removeprefix(word))
             total_solutions += solutions
             if solved:
                 any_solved = True
-
-    manual_cache[current_word] = any_solved, total_solutions
 
     return any_solved, total_solutions
 
@@ -75,7 +72,7 @@ def part_1(data, measure=False):
     lines = parse_input(data)
 
     for line in lines:
-        solved, _ = num_solutions(line)
+        solved, _ = solve(line)
         if solved:
             result_1 += 1
 
@@ -93,7 +90,7 @@ def part_2(data, measure=False):
     lines = parse_input(data)
 
     for line in lines:
-        _, solutions = num_solutions(line)
+        _, solutions = solve(line)
         result_2 += solutions
 
     execution_time = round(time.time() - startTime, 2)
