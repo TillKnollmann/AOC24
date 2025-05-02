@@ -2,6 +2,10 @@
 
 Solutions for [Advent of Code](https://adventofcode.com/) in [Python](https://www.python.org/).
 
+## Generate new Day
+
+Run ```python generate.py --day <day>```.
+
 <!--- advent_readme_stars table --->
 ## 2024 Results
 
