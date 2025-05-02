@@ -21,9 +21,11 @@
 				"KevinRose.vsc-python-indent",
 				"njqdev.vscode-python-typehint"
 			]
-		},
-		"envFile": ".devcontainer/.env"
+		}
 	},
+	"runArgs": [
+        "--env-file", "${localWorkspaceFolder}/.devcontainer/.env"
+    ],
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
