@@ -5,7 +5,7 @@ import time
 
 from importlib.machinery import SourceFileLoader
 
-lib = SourceFileLoader("lib", "lib.py").load_module()
+lib = SourceFileLoader("lib", "../lib.py").load_module()
 
 day = DAY
 path = ""
@@ -107,8 +107,8 @@ def run_tests(test_sol_1, test_sol_2, path):
 
 
 def main():
-    global path, sol_1, sol_2, sub_1, sub_2
-    path = "day-" + str(day).zfill(2) + "/"
+    global path, sol_1, sol_2, sub_1, sub_2, result_2, result_1
+    path = "../day-" + str(day).zfill(2) + "/"
 
     test = True
 

@@ -19,7 +19,7 @@ sol_1 = sub_1 = True
 sol_2 = sub_2 = True
 
 
-class Point():
+class Point:
 
     def __init__(self, x: int, y: int):
         self.x = x
@@ -88,7 +88,7 @@ def dijkstra(field: list[list[int]], start: Point, end: Point) -> int:
         for direction in directions:
             neighbor = Point(current_point.x + direction.x, current_point.y + direction.y)
 
-            if 0 <= neighbor.x < rows and 0 <= neighbor.y < cols and field[neighbor.x][neighbor.y] == 0:
+            if rows > neighbor.x >= 0 == field[neighbor.x][neighbor.y] and 0 <= neighbor.y < cols:
                 new_distance = current_distance + 1
 
                 if new_distance < distances[neighbor.x][neighbor.y]:
@@ -217,7 +217,7 @@ def run_tests(test_sol_1, test_sol_2, path):
 
 
 def main():
-    global path, sol_1, sol_2, sub_1, sub_2
+    global path, sol_1, sol_2, sub_1, sub_2, result_2, result_1
     path = "day-" + str(day).zfill(2) + "/"
 
     test = True

@@ -1,14 +1,9 @@
-from aocd import submit
-from aocd import get_data
-from datetime import date
-import numpy as np
 import time
-import pprint
-import math
-import re
-from copy import deepcopy
-
 from importlib.machinery import SourceFileLoader
+
+import numpy as np
+from aocd import get_data
+from aocd import submit
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
@@ -38,13 +33,13 @@ def parse_input(input: list[str]) -> Area:
 
 def is_inside(x: int, y: int, area: Area) -> bool:
 
-    return x >= 0 and x < len(area[0]) and y >= 0 and y < len(area[0])
+    return 0 <= x < len(area[0]) and 0 <= y < len(area[0])
 
 
 def get_price(x: int, y: int, area: Area, part_two: bool) -> tuple[int, Area]:
 
     if area[x][y] == invalid_token:
-        return (0, area)
+        return 0, area
 
     area_of_token = [[0 for y in range(len(area[x]))]
                      for x in range(len(area))]
@@ -60,7 +55,7 @@ def get_price(x: int, y: int, area: Area, part_two: bool) -> tuple[int, Area]:
     if part_two:
         total_perimeter = get_number_of_sides(area_of_token)
 
-    return (total_area_of_token * total_perimeter, new_area)
+    return total_area_of_token * total_perimeter, new_area
 
 
 def visit(
@@ -269,7 +264,7 @@ def run_tests(test_sol_1, test_sol_2, path):
 
 
 def main():
-    global path, sol_1, sol_2, sub_1, sub_2
+    global path, sol_1, sol_2, sub_1, sub_2, result_2, result_1
     path = "day-" + str(day).zfill(2) + "/"
 
     test_sol_1 = ["140", "772", "1930", "692", "1184"]

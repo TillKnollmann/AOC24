@@ -20,7 +20,7 @@ sol_1 = sub_1 = False
 sol_2 = sub_2 = False
 
 
-class ClawMachine():
+class ClawMachine:
 
     def __init__(self, shift_a: tuple[int, int], shift_b: tuple[int, int], prize: tuple[int, int]):
         self.shift_a = shift_a
@@ -98,7 +98,7 @@ def evaluate_machine(machine: ClawMachine, max_trials: int) -> int:
 
 def shift(point: tuple[int, int], delta: tuple[int, int], times: int) -> tuple[int, int]:
 
-    return (point[0] + delta[0] * times, point[1] + delta[1] * times)
+    return point[0] + delta[0] * times, point[1] + delta[1] * times
 
 
 def part_1(data, measure=False):
@@ -185,7 +185,7 @@ def run_tests(test_sol_1, test_sol_2, path):
 
 
 def main():
-    global path, sol_1, sol_2, sub_1, sub_2
+    global path, sol_1, sol_2, sub_1, sub_2, result_2, result_1
     path = "day-" + str(day).zfill(2) + "/"
 
     test = True

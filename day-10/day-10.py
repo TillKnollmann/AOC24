@@ -1,14 +1,9 @@
-from aocd import submit
-from aocd import get_data
-from datetime import date
-import numpy as np
 import time
-import pprint
-import math
-import re
-from copy import deepcopy
-
 from importlib.machinery import SourceFileLoader
+
+import numpy as np
+from aocd import get_data
+from aocd import submit
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
@@ -85,7 +80,7 @@ def get_number_of_trails(game: Game, x: int, y: int, reachable_trails: list[list
 
 def is_inside(game: Game, x: int, y: int) -> bool:
 
-    return x >= 0 and x < game.size_x and y >= 0 and y < game.size_y
+    return 0 <= x < game.size_x and 0 <= y < game.size_y
 
 
 def part_1(data, measure=False):
@@ -193,7 +188,7 @@ def run_tests(test_sol_1, test_sol_2, path):
 
 
 def main():
-    global path, sol_1, sol_2, sub_1, sub_2
+    global path, sol_1, sol_2, sub_1, sub_2, result_2, result_1
     path = "day-" + str(day).zfill(2) + "/"
 
     test_sol_1 = ["36"]

@@ -8,7 +8,7 @@ from consoledraw import Console
 
 from importlib.machinery import SourceFileLoader
 
-lib = SourceFileLoader("lib", "lib.py").load_module()
+lib = SourceFileLoader("lib", "../lib.py").load_module()
 
 day = 15
 path = ""
@@ -65,7 +65,7 @@ def print_game(console: Console, game: Game) -> None:
 
 def simulate_game(game: Game) -> Game:
 
-    global visualize
+    global visualize, console
 
     if len(game.commands) > 1000:
         visualize = False
@@ -109,9 +109,9 @@ def find_bot(field: np.char.chararray) -> tuple[int, int]:
     for x in range(len(field)):
         for y in range(len(field[0])):
             if field[x][y] == b'@':
-                return (x, y)
+                return x, y
 
-    return (-1, -1)
+    return -1, -1
 
 
 def simulate_left_move(field: np.char.chararray) -> np.char.chararray:
@@ -240,8 +240,8 @@ def run_tests(test_sol_1, test_sol_2, path):
 
 
 def main():
-    global path, sol_1, sol_2, sub_1, sub_2
-    path = "day-" + str(day).zfill(2) + "/"
+    global path, sol_1, sol_2, sub_1, sub_2, result_2, result_1
+    path = "../day-" + str(day).zfill(2) + "/"
 
     test = True
 

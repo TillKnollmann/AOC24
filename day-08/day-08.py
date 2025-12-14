@@ -1,11 +1,9 @@
-from aocd import submit
-from aocd import get_data
-from datetime import date
-import numpy as np
 import time
-import pprint
-
 from importlib.machinery import SourceFileLoader
+
+import numpy as np
+from aocd import get_data
+from aocd import submit
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
@@ -14,7 +12,7 @@ day = 8
 path = ""
 
 
-class Point():
+class Point:
 
     def __init__(self, x: int, y: int):
         self.x = x
@@ -32,7 +30,7 @@ class Point():
         return f"Point({self.x}, {self.y})"
 
 
-class Instance():
+class Instance:
 
     def __init__(self, antennas: list[Point], size_x: int, size_y: int):
         self.antennas = antennas
@@ -121,7 +119,7 @@ def get_additional_antinodes(antenna_a: Point, antenna_b: Point, instance: Insta
 
 def is_inside(point: Point, size_x: int, size_y: int) -> bool:
 
-    return point.x >= 0 and point.x < size_x and point.y >= 0 and point.y < size_y
+    return 0 <= point.x < size_x and 0 <= point.y < size_y
 
 
 def print_all(instances: dict[str, Instance], antinodes: set[Point]) -> None:
@@ -224,7 +222,7 @@ def run_tests(test_sol_1, test_sol_2, path):
 
 
 def main():
-    global path, sol_1, sol_2, sub_1, sub_2
+    global path, sol_1, sol_2, sub_1, sub_2, result_2, result_1
     path = "day-" + str(day).zfill(2) + "/"
 
     test_sol_1 = ["14"]

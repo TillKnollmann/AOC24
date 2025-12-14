@@ -1,15 +1,12 @@
-import copy
 import operator
 import re
-from aocd import submit
-from aocd import get_data
-
 import time
-import numpy as np
-
-from consoledraw import Console
-
 from importlib.machinery import SourceFileLoader
+
+import numpy as np
+from aocd import get_data
+from aocd import submit
+from consoledraw import Console
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
@@ -21,7 +18,6 @@ test_sol_2 = []  # No tests for part 2
 
 sol_1 = sub_1 = False
 sol_2 = sub_2 = False
-sol_2 = True
 
 
 class Robot:
@@ -187,7 +183,7 @@ def run_tests(test_sol_1, test_sol_2, path):
 
 
 def main():
-    global path, sol_1, sol_2, sub_1, sub_2
+    global path, sol_1, sol_2, sub_1, sub_2, result_2, result_1
 
     path = "day-" + str(day).zfill(2) + "/"
 

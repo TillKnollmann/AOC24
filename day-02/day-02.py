@@ -1,12 +1,10 @@
 import re
-from aocd import submit
-from aocd import get_data
-from datetime import date
-import numpy as np
 import time
-import pprint
-
 from importlib.machinery import SourceFileLoader
+
+import numpy as np
+from aocd import get_data
+from aocd import submit
 
 lib = SourceFileLoader("lib", "lib.py").load_module()
 
@@ -56,13 +54,13 @@ def can_level_be_fixed(level: list[int], violations: list[int]):
     if len(violations) == 0:
         return True
     adapted = cutout(level, violations[0])
-    if (is_level_safe_part_1(adapted)):
+    if is_level_safe_part_1(adapted):
         return True
-    elif (violations[0] + 1 < len(level)):
+    elif violations[0] + 1 < len(level):
         adapted = cutout(level, violations[0]+1)
         if is_level_safe_part_1(adapted):
             return True
-    elif (violations[0] + 2 < len(level)):
+    elif violations[0] + 2 < len(level):
         adapted = cutout(level, violations[0]+2)
         if is_level_safe_part_1(adapted):
             return True
@@ -86,7 +84,7 @@ def get_all_violations(level: list[int]) -> list[int]:
     reversed.reverse()
     violations_reversed = get_violations(reversed)
 
-    return (violations, violations_reversed)
+    return violations, violations_reversed
 
 
 def get_violations(level: list[int]) -> list[int]:
@@ -186,7 +184,7 @@ def run_tests(test_sol_1, test_sol_2, path):
 
 
 def main():
-    global path, sol_1, sol_2, sub_1, sub_2
+    global path, sol_1, sol_2, sub_1, sub_2, result_2, result_1
     path = "day-" + str(day).zfill(2) + "/"
 
     test_sol_1 = ["2"]
