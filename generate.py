@@ -24,7 +24,7 @@ def main():
         file_data = ""
         with open(current_path + "/" + day_name, "r") as file:
             file_data = file.read()
-        file_data = file_data.replace("DAY", str(args.day))
+        file_data = file_data.replace("{{DAY}}", str(args.day))
         with open(current_path + "/" + day_name, "w") as file:
             file.write(file_data)
 
